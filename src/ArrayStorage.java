@@ -52,7 +52,7 @@ public class ArrayStorage {
                 idx++;
             }
         }
-        return Arrays.copyOf(tmp,idx);
+        return Arrays.copyOf(tmp, idx);
     }
 
     int size() {
