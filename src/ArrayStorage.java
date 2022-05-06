@@ -46,9 +46,9 @@ public class ArrayStorage {
         Resume[] tmp;
         tmp = new Resume[storage.length];
         int idx = 0;
-        for(int i = 0; i < storage.length; i++) {
-            if (storage[i] != null) {
-                tmp[idx] = storage[i];
+        for (Resume resume : storage) {
+            if (resume != null) {
+                tmp[idx] = resume;
                 idx++;
             }
         }
