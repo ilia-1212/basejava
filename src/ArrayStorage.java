@@ -4,58 +4,68 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[10000];
+    private Resume[] storage;
+    private int size;
 
-    void clear() {
-        Arrays.fill(storage, 0, storage.length, null);
+    public ArrayStorage() {
+        storage = new Resume[10];
+        size = 0;
     }
 
-    void save(Resume r) {
-        if (get(r.uuid) == null) {
-            storage[size()] = r;
+    public void clear() {
+        Arrays.fill(storage, 0, size, null);
+        size = 0;
+    }
+
+    public void save(Resume r) {
+        if (getIndex(r.uuid) == -1) {
+            storage[size++] = r;
         }
     }
 
-    Resume get(String uuid) {
+    public Resume get(String uuid) {
         int idx = getIndex(uuid);
-        if (idx != -1) return storage[idx];
-        else return null;
-    }
-
-    void delete(String uuid) {
-        for(int i = getIndex(uuid); i != -1 && i < storage.length; i++) {
-            if (i != storage.length - 1) {
-                storage[i] = storage[i + 1];
-            } else storage[i] = null;
+        if (idx != -1) {
+            return storage[idx];
+        }
+        else {
+            return null;
         }
     }
 
-    int getIndex(String uuid) {
-        for(int i = 0; i < storage.length; i++) {
-            if (storage[i] != null && storage[i].uuid.equals(uuid)) {
+    public void delete(String uuid) {
+        int idx = getIndex(uuid);
+        if (idx != -1) {
+            // storage[idx] = storage[--size];
+            storage = shiftArray(storage, idx);
+            --size;
+        }
+    }
+
+    /**
+     * @return array, contains only Resumes in storage (without null)
+     */
+    public Resume[] getAll() {
+        return Arrays.copyOf(storage, size);
+    }
+
+    public int size() {
+        return size;
+    }
+
+    private int getIndex(String uuid) {
+        for(int i = 0; i < size; i++) {
+            if (uuid.equals(storage[i].uuid)) {
                 return i;
             }
         }
         return -1;
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-    Resume[] getAll() {
-        Resume[] tmp;
-        tmp = new Resume[storage.length];
-        int idx = 0;
-        for (Resume resume : storage) {
-            if (resume != null) {
-                tmp[idx] = resume;
-                idx++;
-            }
-        }
-        return Arrays.copyOf(tmp, idx);
-    }
-
-    int size() {
-        return getAll().length;
+    private Resume[] shiftArray(Resume[] resumes, int index) {
+        Resume[] tmp = new Resume[resumes.length - 1];
+        System.arraycopy(resumes, (index + 1), tmp, index, (resumes.length - index - 1));
+        System.arraycopy(resumes, 0, tmp, 0, index);
+        return tmp;
     }
 }
