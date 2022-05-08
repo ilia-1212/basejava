@@ -8,7 +8,7 @@ public class ArrayStorage {
     private int size;
 
     public ArrayStorage() {
-        storage = new Resume[10000];
+        storage = new Resume[4];
         size = 0;
     }
 
@@ -24,21 +24,20 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        int idx = getIndex(uuid);
-        if (idx != -1) {
-            return storage[idx];
-        }
-        else {
+        int index = getIndex(uuid);
+        if (index != -1) {
+            return storage[index];
+        } else {
             return null;
         }
     }
 
     public void delete(String uuid) {
-        int idx = getIndex(uuid);
-        if (idx != -1) {
-            // storage[idx] = storage[--size];
-            storage = shiftArray(storage, idx);
-            --size;
+        int index = getIndex(uuid);
+        if (index != -1) {
+            System.arraycopy(storage, (index + 1), storage, index, (storage.length - index - 1));
+            storage[storage.length - 1] = null;
+            size--;
         }
     }
 
