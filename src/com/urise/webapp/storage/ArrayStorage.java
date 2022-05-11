@@ -1,3 +1,7 @@
+package com.urise.webapp.storage;
+
+import com.urise.webapp.model.Resume;
+
 import java.util.Arrays;
 
 /**
@@ -18,8 +22,21 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        if (getIndex(r.uuid) == -1) {
+        if (size + 1 > storage.length) {
+            System.out.println("Ошибка при сохранении, массив будет переполнен!");
+        } else if (getIndex(r.getUuid()) == -1) {
             storage[size++] = r;
+        } else {
+            System.out.println("Ошибка при сохранении, uuid [" + r.getUuid() + "] уже есть!");
+        }
+    }
+
+    public void update(Resume r) {
+        int index = getIndex(r.getUuid());
+        if (index != -1) {
+            storage[index] = r;
+        } else {
+            System.out.println("Ошибка при  обновлении, uuid [" + r.getUuid() + "] не найден!");
         }
     }
 
@@ -28,6 +45,7 @@ public class ArrayStorage {
         if (index != -1) {
             return storage[index];
         } else {
+            System.out.println("Ошибка при поиске, uuid [" + uuid + "] не найден!");
             return null;
         }
     }
@@ -38,6 +56,8 @@ public class ArrayStorage {
             System.arraycopy(storage, (index + 1), storage, index, (storage.length - index - 1));
             storage[storage.length - 1] = null;
             size--;
+        } else {
+            System.out.println("Ошибка при удалении, uuid [" + uuid + "] не найден!");
         }
     }
 
@@ -53,18 +73,11 @@ public class ArrayStorage {
     }
 
     private int getIndex(String uuid) {
-        for(int i = 0; i < size; i++) {
-            if (uuid.equals(storage[i].uuid)) {
+        for (int i = 0; i < size; i++) {
+            if (uuid.equals(storage[i].getUuid())) {
                 return i;
             }
         }
         return -1;
-    }
-
-    private Resume[] shiftArray(Resume[] resumes, int index) {
-        Resume[] tmp = new Resume[resumes.length - 1];
-        System.arraycopy(resumes, (index + 1), tmp, index, (resumes.length - index - 1));
-        System.arraycopy(resumes, 0, tmp, 0, index);
-        return tmp;
     }
 }
