@@ -8,11 +8,12 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private Resume[] storage;
+    private final Resume[] storage;
     private int size;
+    protected static final int STORAGE_LIMIT = 10000;
 
     public ArrayStorage() {
-        storage = new Resume[4];
+        storage = new Resume[STORAGE_LIMIT];
         size = 0;
     }
 
@@ -22,8 +23,8 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        if (size + 1 > storage.length) {
-            System.out.println("Ошибка при сохранении, массив будет переполнен!");
+        if (size == storage.length) {
+            System.out.println("Ошибка при сохранении, uuid [" + r.getUuid() + "] , массив будет переполнен!");
         } else if (getIndex(r.getUuid()) == -1) {
             storage[size++] = r;
         } else {
@@ -53,7 +54,7 @@ public class ArrayStorage {
     public void delete(String uuid) {
         int index = getIndex(uuid);
         if (index != -1) {
-            System.arraycopy(storage, (index + 1), storage, index, (storage.length - index - 1));
+            System.arraycopy(storage, index + 1, storage, index, storage.length - index - 1);
             storage[storage.length - 1] = null;
             size--;
         } else {
