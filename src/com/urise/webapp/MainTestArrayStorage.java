@@ -16,7 +16,7 @@ public class MainTestArrayStorage {
         final Resume r2 = new Resume();
         r2.setUuid("uuid2");
         final Resume r3 = new Resume();
-        r3.setUuid("uuid3");
+        r3.setUuid("uuid5");
 
         ARRAY_STORAGE.save(r1);
         ARRAY_STORAGE.save(r2);
@@ -31,8 +31,6 @@ public class MainTestArrayStorage {
         r2.setUuid("uuid4");
         ARRAY_STORAGE.update(r2);
         printAll();
-
-        //System.out.println("b-seacrh " + Arrays.binarySearch(ARRAY_STORAGE.storage,0,ARRAY_STORAGE.size(), r3));
 
         ARRAY_STORAGE.delete(r1.getUuid());
         printAll();
