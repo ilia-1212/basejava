@@ -10,7 +10,7 @@ public interface Storage {
 
     void save(Resume r);
 
-    void update(Resume r);
+    void update(String oldUuid, String newUuid);
 
     Resume get(String uuid);
 

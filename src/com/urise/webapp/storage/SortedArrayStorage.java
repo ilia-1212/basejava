@@ -5,29 +5,28 @@ import com.urise.webapp.model.Resume;
 import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
-    @Override
-    public void clear() {
 
+    @Override
+    public void update(String oldUuid, String newUuid) {
+        delete(oldUuid);
+        Resume object = new Resume();
+        object.setUuid(newUuid);
+        save(object);
     }
 
     @Override
     public void save(Resume r) {
-
-    }
-
-    @Override
-    public void update(Resume r) {
-
-    }
-
-    @Override
-    public void delete(String uuid) {
-
-    }
-
-    @Override
-    public Resume[] getAll() {
-        return new Resume[0];
+        int index = getIndex(r.getUuid());
+        if (size == STORAGE_LIMIT) {
+            System.out.println("Ошибка при сохранении, uuid [" + r.getUuid() + "] , массив будет переполнен!");
+        } else if (index < 0) {
+            index = - index - 1;
+            System.arraycopy(storage, index, storage, index + 1, size - index);
+            storage[index] = r;
+            size++;
+        } else {
+            System.out.println("Ошибка при сохранении, uuid [" + r.getUuid() + "] уже есть!");
+        }
     }
 
     @Override
