@@ -4,14 +4,29 @@ import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
 
+/**
+ * Array based storage for Resumes
+ */
 public abstract class AbstractArrayStorage implements Storage {
     protected static final int STORAGE_LIMIT = 10;
-    protected final Resume[] storage = new Resume[STORAGE_LIMIT];
+
+    protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
+
+    public final int size() {
+        return size;
+    }
 
     public final void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
+    }
+
+    /**
+     * @return array, contains only Resumes in storage (without null)
+     */
+    public final Resume[] getAll() {
+        return Arrays.copyOf(storage, size);
     }
 
     public final void delete(String uuid) {
@@ -25,13 +40,6 @@ public abstract class AbstractArrayStorage implements Storage {
         }
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-    public final Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
-    }
-
     public final Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index >= 0) {
@@ -40,10 +48,6 @@ public abstract class AbstractArrayStorage implements Storage {
             System.out.println("Ошибка при поиске, uuid [" + uuid + "] не найден!");
             return null;
         }
-    }
-
-    public final int size() {
-        return size;
     }
 
     public abstract void save(Resume r);
