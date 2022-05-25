@@ -32,11 +32,32 @@ public abstract class AbstractArrayStorage implements Storage {
     public final void delete(String uuid) {
         int index = getIndex(uuid);
         if (index >= 0) {
-            System.arraycopy(storage, index + 1, storage, index, storage.length - index - 1);
-            storage[storage.length - 1] = null;
+            deleteElement(index);
+            storage[size - 1] = null;
             size--;
         } else {
             System.out.println("Ошибка при удалении, uuid [" + uuid + "] не найден!");
+        }
+    }
+
+    public void save(Resume r) {
+        int index = getIndex(r.getUuid());
+        if (size == STORAGE_LIMIT) {
+            System.out.println("Ошибка при сохранении, uuid [" + r.getUuid() + "] , массив будет переполнен!");
+        } else if (index < 0) {
+            addingElement(r, index);
+            size++;
+        } else {
+            System.out.println("Ошибка при сохранении, uuid [" + r.getUuid() + "] уже есть!");
+        }
+    }
+
+    public void update(Resume r) {
+        int index = getIndex(r.getUuid());
+        if (index >= 0) {
+            storage[index] = r;
+        } else {
+            System.out.println("Ошибка при  обновлении, uuid [" + r.getUuid() + "] не найден!");
         }
     }
 
@@ -50,9 +71,7 @@ public abstract class AbstractArrayStorage implements Storage {
         }
     }
 
-    public abstract void save(Resume r);
-
-    public abstract void update(String oldUuid, String newUuid);
-
+    protected abstract void deleteElement(int index);
+    protected abstract void addingElement(Resume r, int index);
     protected abstract int getIndex(String uuid);
 }
