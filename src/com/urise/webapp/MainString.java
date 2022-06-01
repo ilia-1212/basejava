@@ -1,5 +1,7 @@
 package com.urise.webapp;
 
+import com.urise.webapp.exception.ExistStorageException;
+
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.SortedMap;
@@ -38,26 +40,16 @@ public class MainString {
             System.out.println(sb.toString());
         }
 
-        int N = 77777777;
-        long t;
-
-        {
-            StringBuffer sb = new StringBuffer();
-            t = System.currentTimeMillis();
-            for (int i = N; i-- > 0; ) {
-                sb.append("");
-            }
-            System.out.println(System.currentTimeMillis() - t);
+        try {
+            method();
+        } catch (ExistStorageException e) {
+            e.getStackTrace();
+            System.out.println("err " + e.getMessage());
         }
+    }
 
-        {
-            StringBuilder sb = new StringBuilder();
-            t = System.currentTimeMillis();
-            for (int i = N; i-- > 0; ) {
-                sb.append("");
-            }
-            System.out.println(System.currentTimeMillis() - t);
-        }
-
+    private static void method() {
+        System.out.println("run method");
+        throw new ExistStorageException("ddd");
     }
 }
