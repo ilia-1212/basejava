@@ -92,20 +92,20 @@ public abstract class AbstractArrayStorageTest {
 
     @Test(expected = StorageException.class)
     public void saveOverflow() {
-        int x = 0;
+        int indexOver = 0;
         storage.clear();
         try {
             storage.save(RESUME_1);
             storage.save(RESUME_2);
             storage.save(RESUME_3);
-            x = storage.size();
+            indexOver = storage.size();
             for (int i = storage.size(); i < 10000; i++) {
-                x++;
+                indexOver++;
                 storage.save(new Resume());
             }
 
         } catch (StorageException e) {
-           Assert.fail("overflow storage while inserting " + x);
+           Assert.fail("overflow storage while inserting index " + indexOver);
         }
         storage.save(RESUME_4);
     }
