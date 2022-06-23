@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 
 public class MainReflection {
 
-    public static void main(String[] args) throws IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
+    public static void main(String[] args) throws IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, CloneNotSupportedException {
         Resume r = new Resume();
         Class<? extends Resume> classResume = r.getClass();
         Field field = classResume.getDeclaredFields()[0];

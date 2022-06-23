@@ -1,5 +1,7 @@
 package com.urise.webapp;
 
+import com.urise.webapp.exception.ExistStorageException;
+import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.ArrayStorage;
 import com.urise.webapp.storage.Storage;
@@ -15,7 +17,7 @@ import java.io.InputStreamReader;
 public class MainArray {
     private final static Storage ARRAY_STORAGE = new ArrayStorage();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, CloneNotSupportedException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         Resume r;
         while (true) {
@@ -29,39 +31,45 @@ public class MainArray {
             if (params.length == 2) {
                 uuid = params[1].intern();
             }
-            switch (params[0]) {
-                case "list":
-                    printAll();
-                    break;
-                case "size":
-                    System.out.println(ARRAY_STORAGE.size());
-                    break;
-                case "save":
-                    r = new Resume(uuid);
-                    ARRAY_STORAGE.save(r);
-                    printAll();
-                    break;
-                case "update":
-                    r = new Resume(uuid);
-                    ARRAY_STORAGE.update(r);
-                    printAll();
-                    break;
-                case "delete":
-                    ARRAY_STORAGE.delete(uuid);
-                    printAll();
-                    break;
-                case "get":
-                    System.out.println(ARRAY_STORAGE.get(uuid));
-                    break;
-                case "clear":
-                    ARRAY_STORAGE.clear();
-                    printAll();
-                    break;
-                case "exit":
-                    return;
-                default:
-                    System.out.println("Неверная команда.");
-                    break;
+            try {
+                switch (params[0]) {
+                    case "list":
+                        printAll();
+                        break;
+                    case "size":
+                        System.out.println(ARRAY_STORAGE.size());
+                        break;
+                    case "save":
+                        r = new Resume(uuid);
+                        ARRAY_STORAGE.save(r);
+                        printAll();
+                        break;
+                    case "update":
+                        r = new Resume(uuid);
+                        ARRAY_STORAGE.update(r);
+                        printAll();
+                        break;
+                    case "delete":
+                        ARRAY_STORAGE.delete(uuid);
+                        printAll();
+                        break;
+                    case "get":
+                        System.out.println(ARRAY_STORAGE.get(uuid));
+                        break;
+                    case "clear":
+                        ARRAY_STORAGE.clear();
+                        printAll();
+                        break;
+                    case "exit":
+                        return;
+                    default:
+                        System.out.println("Неверная команда.");
+                        break;
+                }
+            } catch (NotExistStorageException | ExistStorageException e) {
+                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                throw e;
             }
         }
     }

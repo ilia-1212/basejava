@@ -5,16 +5,16 @@ import java.util.UUID;
 /**
  * Initial resume class
  */
-public class Resume implements Comparable<Resume> {
+public class Resume /*implements Comparable<Resume>*/ {
 
     // Unique identifier
     private final String uuid;
 
-    public Resume() {
+    public Resume() throws CloneNotSupportedException {
         this(UUID.randomUUID().toString());
     }
 
-    public Resume(String uuid) {
+    public Resume(String uuid) throws CloneNotSupportedException {
         this.uuid = uuid;
     }
 
@@ -42,8 +42,8 @@ public class Resume implements Comparable<Resume> {
         return uuid;
     }
 
-    @Override
-    public int compareTo(Resume o) {
-        return uuid.compareTo(o.uuid);
-    }
+   // @Override
+//    public int compareTo(Resume o) {
+//        return uuid.compareTo(o.uuid);
+//    }
 }

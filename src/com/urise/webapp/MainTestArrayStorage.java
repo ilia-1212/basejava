@@ -10,7 +10,7 @@ import com.urise.webapp.storage.Storage;
 public class MainTestArrayStorage {
     static final Storage ARRAY_STORAGE = new SortedArrayStorage();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CloneNotSupportedException {
         Resume r1 = new Resume("uuid1");
         Resume r2 = new Resume("uuid7");
         Resume r3 = new Resume("uuid5");

@@ -7,7 +7,7 @@ import com.urise.webapp.storage.Storage;
 public class MainTestListStorage {
    final static Storage ARRAY_STORAGE = new ListStorage();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CloneNotSupportedException {
         Resume resume1 = new Resume("52");
         Resume resume2 = new Resume("51");
         Resume resume3 = new Resume("512");

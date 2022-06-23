@@ -17,17 +17,24 @@ public abstract class AbstractStorageTest {
     }
 
     protected static final String UUID_1 = "uuid1";
-    protected static final Resume RESUME_1 = new Resume(UUID_1);
-
     protected static final String UUID_2 = "uuid2";
-    protected static final Resume RESUME_2 = new Resume(UUID_2);
-
     protected static final String UUID_3 = "uuid3";
-    protected static final Resume RESUME_3 = new Resume(UUID_3);
-
     protected static final String UUID_4 = "uuid4";
-    protected static final Resume RESUME_4 = new Resume(UUID_4);
 
+    protected static final Resume RESUME_1;//= new Resume(UUID_1);
+    protected static final Resume RESUME_2;//= new Resume(UUID_2);
+    protected static final Resume RESUME_3;//= new Resume(UUID_3);
+    protected static final Resume RESUME_4;//= new Resume(UUID_4);
+    static {
+        try {
+            RESUME_1 = new Resume(UUID_1);
+            RESUME_2 = new Resume(UUID_2);
+            RESUME_3 = new Resume(UUID_3);
+            RESUME_4 = new Resume(UUID_4);
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException();
+        }
+    }
     @Before
     public void setUp() throws Exception {
         storage.clear();

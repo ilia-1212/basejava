@@ -1,62 +1,42 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.LinkedList;
 
 public class ListStorage extends AbstractStorage {
-   // protected ArrayList<Resume> storage = new ArrayList<>();
+    // protected ArrayList<Resume> storage = new ArrayList<>();
+
     protected LinkedList<Resume> storage = new LinkedList<>();
 
     @Override
     public void clear() {
         storage.clear();
-        //storage.trimToSize();
     }
 
     @Override
-    public void update(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index < 0) {
-            throw new NotExistStorageException(r.getUuid());
-        }
-        storage.set(index, r);
+    protected void doUpdate(Object key, Object r) {
+        storage.set((int) key, (Resume) r);
     }
 
     @Override
-    public void save(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index >= 0) {
-            throw new ExistStorageException(r.getUuid());
-        } else {
-            insertResume(r, index);
-        }
+    protected void doSave(Object key, Object r) {
+        storage.add((Resume) r);
     }
 
     @Override
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        return storage.get(index);
+    protected Resume doGet(Object key) {
+        return storage.get((int) key);
     }
 
     @Override
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        deleteResume(index);
+    protected void doDelete(Object key) {
+        storage.remove((int) key);
     }
 
     @Override
     public Resume[] getAll() {
-       Resume[] tmp = new Resume[storage.size()];
-        return storage.toArray(tmp);
+        return storage.toArray(new Resume[0]);
     }
 
     @Override
@@ -65,18 +45,19 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void deleteResume(int index) {
-        storage.remove(index);
+    protected Object findSearchKey(Object key) {
+        int searchKey = -1;
+        try {
+            Resume searchObject  = new Resume((String) key);
+            searchKey =  storage.indexOf(searchObject);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return searchKey;
     }
 
     @Override
-    protected void insertResume(Resume r, int index) {
-        storage.add(r);
-    }
-
-    @Override
-    protected int getIndex(String uuid) {
-        Resume searchKey = new Resume(uuid);
-        return storage.indexOf(searchKey);
+    protected boolean isExist(Object key) {
+        return ((int) key >= 0) ? true : false;
     }
 }
