@@ -20,14 +20,13 @@ public class ArrayStorage extends AbstractArrayStorage {
     @Override
     protected Object findSearchKey(Object key) {
         int searchKey = -1;
-        key = (String) key;
         for (int i = 0; i < size; i++) {
             if (key.equals(storage[i].getUuid())) {
                 searchKey =  i;
                 break;
             }
         }
-        return (Integer) searchKey;
+        return searchKey;
     }
 
     @Override

@@ -42,7 +42,7 @@ public class Resume /*implements Comparable<Resume>*/ {
         return uuid;
     }
 
-   // @Override
+//    @Override
 //    public int compareTo(Resume o) {
 //        return uuid.compareTo(o.uuid);
 //    }

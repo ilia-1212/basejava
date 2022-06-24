@@ -3,11 +3,10 @@ package com.urise.webapp.storage;
 import com.urise.webapp.model.Resume;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class ListStorage extends AbstractStorage {
-    // protected ArrayList<Resume> storage = new ArrayList<>();
-
-    protected LinkedList<Resume> storage = new LinkedList<>();
+    protected List<Resume> storage = new LinkedList<>();
 
     @Override
     public void clear() {
