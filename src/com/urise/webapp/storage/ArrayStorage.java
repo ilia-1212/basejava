@@ -22,7 +22,7 @@ public class ArrayStorage extends AbstractArrayStorage {
         int searchKey = -1;
         for (int i = 0; i < size; i++) {
             if (key.equals(storage[i].getUuid())) {
-                searchKey =  i;
+                searchKey = i;
                 break;
             }
         }
