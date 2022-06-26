@@ -18,18 +18,17 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Object key, Object r) {
-        storage[(int) key] = (Resume) r;
+    protected void doUpdate(Object key, Resume r) {
+        storage[(int) key] = r;
     }
 
     @Override
-    protected void doSave(Object key, Object r) {
+    protected void doSave(Object key, Resume r) {
         int index = (int) key;
-        Resume resume = (Resume) r;
         if (size == STORAGE_LIMIT) {
-            throw new StorageException("Storage overflow", resume.getUuid());
+            throw new StorageException("Storage overflow", r.getUuid());
         }
-        insertResume(index, resume);
+        insertResume(index, r);
         size++;
     }
 

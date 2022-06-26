@@ -13,13 +13,13 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Object key, Object r) {
-        storage.set((int) key, (Resume) r);
+    protected void doUpdate(Object key, Resume r) {
+        storage.set((int) key, r);
     }
 
     @Override
-    protected void doSave(Object key, Object r) {
-        storage.add((Resume) r);
+    protected void doSave(Object key, Resume r) {
+        storage.add(r);
     }
 
     @Override
@@ -56,6 +56,6 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     protected boolean isExist(Object key) {
-        return ((int) key >= 0) ? true : false;
+        return (int) key >= 0;
     }
 }

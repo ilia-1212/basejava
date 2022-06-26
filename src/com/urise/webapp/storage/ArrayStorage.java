@@ -31,6 +31,6 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected boolean isExist(Object key) {
-        return ((int) key >= 0) ? true : false;
+        return (int) key >= 0;
     }
 }

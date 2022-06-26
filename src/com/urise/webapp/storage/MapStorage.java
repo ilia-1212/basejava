@@ -14,14 +14,13 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Object key, Object r) {
-        storage.put((String) key, (Resume) r);
+    protected void doUpdate(Object key, Resume r) {
+        storage.put((String) key, r);
     }
 
     @Override
-    protected void doSave(Object key, Object r) {
-        Resume resume = (Resume) r;
-        storage.put(resume.getUuid(), resume);
+    protected void doSave(Object key, Resume r) {
+        storage.put(r.getUuid(), r);
     }
 
     @Override
@@ -46,15 +45,11 @@ public class MapStorage extends AbstractStorage {
 
     @Override
     protected Object findSearchKey(Object key) {
-        String searchKey = "<empty>";
-        if (storage.containsKey(key)) {
-            searchKey = (String) key;
-        }
-        return searchKey;
+        return key;
     }
 
     @Override
     protected boolean isExist(Object key) {
-        return (!key.equals("<empty>")) ? true : false;
+        return storage.containsKey((String) key);
     }
 }
