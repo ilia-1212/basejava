@@ -18,14 +18,10 @@ public class MainCollections {
     private static final Resume RESUME_4;
 
     static {
-        try {
-            RESUME_1 = new Resume(UUID_1);
-            RESUME_2 = new Resume(UUID_2);
-            RESUME_3 = new Resume(UUID_3);
-            RESUME_4 = new Resume(UUID_4);
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException();
-        }
+        RESUME_1 = new Resume(UUID_1);
+        RESUME_2 = new Resume(UUID_2);
+        RESUME_3 = new Resume(UUID_3);
+        RESUME_4 = new Resume(UUID_4);
     }
 
     public static void main(String[] args) {

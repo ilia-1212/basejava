@@ -26,14 +26,10 @@ public abstract class AbstractStorageTest {
     protected static final Resume RESUME_3;//= new Resume(UUID_3);
     protected static final Resume RESUME_4;//= new Resume(UUID_4);
     static {
-        try {
-            RESUME_1 = new Resume(UUID_1);
-            RESUME_2 = new Resume(UUID_2);
-            RESUME_3 = new Resume(UUID_3);
-            RESUME_4 = new Resume(UUID_4);
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException();
-        }
+        RESUME_1 = new Resume(UUID_1, "Илья");
+        RESUME_2 = new Resume(UUID_2, "Илья");
+        RESUME_3 = new Resume(UUID_3, "Дима");
+        RESUME_4 = new Resume(UUID_4, "Андрей");
     }
     @Before
     public void setUp() throws Exception {
@@ -57,7 +53,7 @@ public abstract class AbstractStorageTest {
     public void clear() throws Exception {
         storage.clear();
         assertSize(0);
-        Assert.assertArrayEquals(new Resume[]{}, storage.getAll());
+        Assert.assertArrayEquals(new Resume[]{}, storage.getAllSorted().toArray(new Resume[0]));
     }
 
     @Test
@@ -74,8 +70,8 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAll() throws Exception {
-        Resume[] r_all = storage.getAll();
-        Resume[] expected = new Resume[]{RESUME_1, RESUME_2, RESUME_3};
+        Resume[] r_all = storage.getAllSorted().toArray(new Resume[0]);
+        Resume[] expected = new Resume[]{RESUME_3, RESUME_1, RESUME_2};
         Assert.assertArrayEquals(expected, r_all);
         assertSize(3);
     }

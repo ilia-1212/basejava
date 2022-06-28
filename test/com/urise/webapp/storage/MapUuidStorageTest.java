@@ -2,9 +2,9 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 
-public class MapStorageTest extends AbstractStorageTest {
-    public MapStorageTest() {
-        super(new MapStorage());
+public class MapUuidStorageTest extends AbstractStorageTest {
+    public MapUuidStorageTest() {
+        super(new MapUuidStorage());
     }
 
     @Override

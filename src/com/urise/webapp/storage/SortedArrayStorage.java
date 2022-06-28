@@ -6,18 +6,23 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
+//1 вариант
 //    private static class ResumeComparator implements Comparator<Resume> {
 //        @Override
 //        public int compare(Resume o1, Resume o2) {
 //            return o1.getUuid().compareTo(o2.getUuid());
 //        }
 //    }
-    private static final Comparator<Resume> RESUME_COMPARATOR = new Comparator<Resume>() {
-        @Override
-        public int compare(Resume o1, Resume o2) {
-            return o1.getUuid().compareTo(o2.getUuid());
-        }
-    };
+//2 вариант
+//    private static final Comparator<Resume> RESUME_COMPARATOR_1 = new Comparator<Resume>() {
+//        @Override
+//        public int compare(Resume o1, Resume o2) {
+//            return o1.getUuid().compareTo(o2.getUuid());
+//        }
+//    };
+
+    //3 вариант
+    private static final Comparator<Resume> RESUME_COMPARATOR = (f1,f2) -> f1.getUuid().compareTo(f2.getUuid());
 
     @Override
     protected void deleteResume(int index) {
@@ -35,19 +40,8 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected Object findSearchKey(Object key) {
-        int searchKey = -1;
-        try {
-            Resume searchObject  = new Resume((String) key);
-            searchKey =  Arrays.binarySearch(storage, 0, size, searchObject, RESUME_COMPARATOR);
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return searchKey;
-    }
-
-    @Override
-    protected boolean isExist(Object key) {
-        return (int) key >= 0;
+    protected Integer getSearchKey(Object key) {
+        Resume searchObject  = new Resume((String) key, null);
+        return Arrays.binarySearch(storage, 0, size, searchObject, RESUME_COMPARATOR);
     }
 }

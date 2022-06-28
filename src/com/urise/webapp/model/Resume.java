@@ -1,5 +1,6 @@
 package com.urise.webapp.model;
 
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -8,18 +9,36 @@ import java.util.UUID;
 public class Resume /*implements Comparable<Resume>*/ {
 
     // Unique identifier
-    private final String uuid;
+    private String uuid;
+    private String fullName;
 
-    public Resume() throws CloneNotSupportedException {
-        this(UUID.randomUUID().toString());
+    public Resume() {
+        this(UUID.randomUUID().toString(), null);
+        Random rnd = new Random();
+
+        String randomString = rnd.ints(97, 123).
+                limit(10).collect(StringBuilder::new,StringBuilder::appendCodePoint,StringBuilder::append ).toString();
+        this.fullName = randomString;
+    }
+    public Resume(String uuid) {
+        this.uuid = uuid;
     }
 
-    public Resume(String uuid) throws CloneNotSupportedException {
+    public Resume(String uuid, String fullName) {
         this.uuid = uuid;
+        this.fullName = fullName;
     }
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     @Override
@@ -39,7 +58,7 @@ public class Resume /*implements Comparable<Resume>*/ {
 
     @Override
     public String toString() {
-        return uuid;
+        return uuid + ":" + fullName;
     }
 
 //    @Override

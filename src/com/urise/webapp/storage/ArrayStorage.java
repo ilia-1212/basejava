@@ -18,19 +18,12 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected Object findSearchKey(Object key) {
-        int searchKey = -1;
+    protected Integer getSearchKey(Object key) {
         for (int i = 0; i < size; i++) {
-            if (key.equals(storage[i].getUuid())) {
-                searchKey = i;
-                break;
+            if (((String) key).equals(storage[i].getUuid())) {
+                return i;
             }
         }
-        return searchKey;
-    }
-
-    @Override
-    protected boolean isExist(Object key) {
-        return (int) key >= 0;
+        return -1;
     }
 }
