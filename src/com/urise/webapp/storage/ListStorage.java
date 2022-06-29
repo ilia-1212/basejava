@@ -9,10 +9,10 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     // переопределили Object на Integer
-    protected Integer getSearchKey(Object key) {
+    protected Integer getSearchKey(String key) {
         // не подходит indexOf из-за сравнения всего объекта , нужно сравнить по Uuid
         for (int i = 0; i < storage.size(); i++) {
-            if (((String) key).equals(storage.get(i).getUuid())) {
+            if (key.equals(storage.get(i).getUuid())) {
                 return i;
             }
         }
@@ -50,11 +50,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> list = new ArrayList<>(List.copyOf(storage));
-        Comparator<Resume> resumeFullNameUuidComparator = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
-        Collections.sort(list, resumeFullNameUuidComparator);
-        return list;
+    protected List<Resume> getAll() {
+        return new ArrayList<>(List.copyOf(storage));
     }
 
     @Override

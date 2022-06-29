@@ -4,7 +4,6 @@ import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -32,14 +31,9 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         storage[(Integer) key] = r;
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
     @Override
-    public List<Resume> getAllSorted() {
-        Comparator<Resume> resumeFullNameUuidComparator = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
+    protected List<Resume> getAll() {
         Resume[] array = Arrays.copyOfRange(storage, 0, size);
-        Arrays.sort(array, resumeFullNameUuidComparator);
         return Arrays.asList(array);
     }
 
@@ -71,6 +65,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void deleteResume(int index);
 
     protected abstract void insertResume(int index, Resume r);
-    // переопределили тип Object на Integer
-    protected abstract Integer getSearchKey(Object key);
+
+    protected abstract Integer getSearchKey(String key);
 }

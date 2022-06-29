@@ -1,11 +1,11 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.MapFullNameStorage;
+import com.urise.webapp.storage.ArrayStorage;
 import com.urise.webapp.storage.Storage;
 
 public class MainTestListStorage {
-   final static Storage ARRAY_STORAGE = new MapFullNameStorage();
+   final static Storage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) {
         Resume resume1 = new Resume("52", "Илья");

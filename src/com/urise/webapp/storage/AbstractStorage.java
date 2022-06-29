@@ -4,9 +4,14 @@ import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
-public abstract class AbstractStorage implements Storage {
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
-    protected abstract Object getSearchKey(Object key);
+public abstract class AbstractStorage implements Storage {
+    protected static final Comparator<Resume> RESUME_FULLNAME_UUID_COMPARATOR = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
+
+    protected abstract Object getSearchKey(String key);
 
     protected abstract void doUpdate(Object key, Resume r);
 
@@ -17,6 +22,8 @@ public abstract class AbstractStorage implements Storage {
     protected abstract Resume doGet(Object key);
 
     protected abstract void doDelete(Object key);
+
+    protected abstract List<Resume> getAll();
 
     public void update(Resume r) {
         Object key = getExistedSearchKey(r.getUuid());
@@ -36,6 +43,12 @@ public abstract class AbstractStorage implements Storage {
     public Resume get(String uuid) {
         Object key = getExistedSearchKey(uuid);
         return doGet(key);
+    }
+
+    public List<Resume> getAllSorted() {
+        List<Resume> list = getAll();
+        Collections.sort(list, RESUME_FULLNAME_UUID_COMPARATOR);
+        return list;
     }
 
     protected Object getExistedSearchKey(String key) {

@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 public class MainReflection {
 
     public static void main(String[] args) throws IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, CloneNotSupportedException {
-        Resume r = new Resume();
+        Resume r = new Resume("NAME");
         Class<? extends Resume> classResume = r.getClass();
         Field field = classResume.getDeclaredFields()[0];
         field.setAccessible(true);

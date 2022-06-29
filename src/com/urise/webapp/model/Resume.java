@@ -1,6 +1,6 @@
 package com.urise.webapp.model;
 
-import java.util.Random;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -12,21 +12,13 @@ public class Resume /*implements Comparable<Resume>*/ {
     private String uuid;
     private String fullName;
 
-    public Resume() {
-        this(UUID.randomUUID().toString(), null);
-        Random rnd = new Random();
-
-        String randomString = rnd.ints(97, 123).
-                limit(10).collect(StringBuilder::new,StringBuilder::appendCodePoint,StringBuilder::append ).toString();
-        this.fullName = randomString;
-    }
-    public Resume(String uuid) {
-        this.uuid = uuid;
+    public Resume(String fullName) {
+        this(UUID.randomUUID().toString(),fullName);
     }
 
     public Resume(String uuid, String fullName) {
-        this.uuid = uuid;
-        this.fullName = fullName;
+        this.uuid = Objects.requireNonNull(uuid);
+        this.fullName = Objects.requireNonNull(fullName);;
     }
 
     public String getUuid() {
