@@ -2,10 +2,10 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 public class MapUuidStorage extends AbstractStorage {
     protected Map<String, Resume> storage = new TreeMap<>();
@@ -43,7 +43,7 @@ public class MapUuidStorage extends AbstractStorage {
 
     @Override
     protected List<Resume> getAll() {
-        return storage.values().stream().collect(Collectors.toList());
+        return new ArrayList<>(storage.values());
     }
 
     @Override
@@ -53,6 +53,6 @@ public class MapUuidStorage extends AbstractStorage {
 
     @Override
     protected boolean isExist(Object key) {
-        return storage.containsKey(key);
+        return storage.containsKey((String) key);
     }
 }
