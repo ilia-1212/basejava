@@ -4,13 +4,11 @@ import com.urise.webapp.model.Resume;
 
 import java.util.*;
 
-public class ListStorage extends AbstractStorage {
-    protected List<Resume> storage = new LinkedList<>();
+public class ListStorage extends AbstractStorage<Integer> {
+    private List<Resume> storage = new LinkedList<>();
 
     @Override
-    // переопределили Object на Integer
     protected Integer getSearchKey(String key) {
-        // не подходит indexOf из-за сравнения всего объекта , нужно сравнить по Uuid
         for (int i = 0; i < storage.size(); i++) {
             if (key.equals(storage.get(i).getUuid())) {
                 return i;
@@ -20,28 +18,28 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Object key) {
+    protected boolean isExist(Integer key) {
         return key != null;
     }
 
     @Override
-    protected void doUpdate(Object key, Resume r) {
-        storage.set((Integer) key, r);
+    protected void doUpdate(Integer key, Resume r) {
+        storage.set(key, r);
     }
 
     @Override
-    protected void doSave(Object key, Resume r) {
+    protected void doSave(Integer key, Resume r) {
         storage.add(r);
     }
 
     @Override
-    protected Resume doGet(Object key) {
-        return storage.get((Integer) key);
+    protected Resume doGet(Integer key) {
+        return storage.get(key);
     }
 
     @Override
-    protected void doDelete(Object key) {
-        storage.remove(((Integer) key).intValue());
+    protected void doDelete(Integer key) {
+        storage.remove((key).intValue());
     }
 
     @Override
@@ -50,7 +48,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected List<Resume> getAll() {
+    protected List<Resume> doCopyAll() {
         return new ArrayList<>(List.copyOf(storage));
     }
 

@@ -7,33 +7,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class MapUuidStorage extends AbstractStorage {
-    protected Map<String, Resume> storage = new TreeMap<>();
+public class MapUuidStorage extends AbstractStorage<String> {
+    private Map<String, Resume> storage = new TreeMap<>();
 
     @Override
-    // заменили Object на String
-    protected String getSearchKey(String key) {
-        return key;
+    protected String getSearchKey(String uuid) {
+        return uuid;
     }
 
     @Override
-    protected void doUpdate(Object key, Resume r) {
-        storage.put((String) key, r);
+    protected void doUpdate(String uuid, Resume r) {
+                        storage.put(uuid, r);
     }
 
     @Override
-    protected void doSave(Object key, Resume r) {
-        storage.put((String) key, r);
+    protected boolean isExist(String uuid) {
+        return storage.containsKey(uuid);
     }
 
     @Override
-    protected Resume doGet(Object key) {
-        return storage.get((String) key);
+    protected void doSave(String uuid, Resume r) {
+        storage.put(uuid, r);
     }
 
     @Override
-    protected void doDelete(Object key) {
-        storage.remove((String) key);
+    protected Resume doGet(String uuid) {
+        return storage.get(uuid);
+    }
+
+    @Override
+    protected void doDelete(String uuid) {
+        storage.remove(uuid);
     }
 
     @Override
@@ -42,17 +46,12 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    protected List<Resume> getAll() {
+    protected List<Resume> doCopyAll() {
         return new ArrayList<>(storage.values());
     }
 
     @Override
     public int size() {
         return storage.size();
-    }
-
-    @Override
-    protected boolean isExist(Object key) {
-        return storage.containsKey((String) key);
     }
 }

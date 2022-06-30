@@ -2,12 +2,14 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractStorageTest {
     protected final Storage storage;
@@ -69,11 +71,10 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
-    public void getAll() throws Exception {
-        Resume[] r_all = storage.getAllSorted().toArray(new Resume[0]);
-        Resume[] expected = new Resume[]{RESUME_3, RESUME_1, RESUME_2};
-        Assert.assertArrayEquals(expected, r_all);
+    public void getAllSorted() throws Exception {
+        List<Resume> list = storage.getAllSorted();
         assertSize(3);
+        Assert.assertEquals(list, Arrays.asList(RESUME_3, RESUME_1, RESUME_2));
     }
 
     @Test
@@ -87,9 +88,6 @@ public abstract class AbstractStorageTest {
     public void saveExist() throws Exception {
         storage.save(RESUME_1);
     }
-
-    @Test(expected = StorageException.class)
-    public abstract void saveOverflow()  throws Exception;
 
     @Test(expected = NotExistStorageException.class)
     public void delete() throws Exception {
@@ -115,11 +113,11 @@ public abstract class AbstractStorageTest {
         storage.get(UUID_4);
     }
 
-    protected void assertGet(Resume r) {
+    private void assertGet(Resume r) {
         Assert.assertEquals(r, storage.get(r.getUuid()));
     }
 
-    protected void assertSize(int expected) {
+    private void assertSize(int expected) {
         Assert.assertEquals(expected, storage.size());
     }
 }
