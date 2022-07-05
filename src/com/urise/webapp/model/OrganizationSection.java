@@ -1,35 +1,37 @@
 package com.urise.webapp.model;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class OrganizationSection extends Section {
-    private ArrayList<Organization> content;
+    private final List<Organization> organizations;
 
-    public OrganizationSection(ArrayList<Organization> content) {
-        this.content = content;
+    public OrganizationSection(List<Organization> organizations) {
+        Objects.requireNonNull(organizations, "organizations must not be null");
+        this.organizations = organizations;
+    }
+
+    public List<Organization> getOrganizations() {
+        return organizations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrganizationSection that = (OrganizationSection) o;
+
+        return organizations.equals(that.organizations);
+    }
+
+    @Override
+    public int hashCode() {
+        return organizations.hashCode();
     }
 
     @Override
     public String toString() {
-        String text = "";
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/uuuu");
-        for (Organization organization : content) {
-            text += organization.getName() + " url = " + organization.getWebSite() + "\n";
-
-            for (Position position : organization.getPositions()) {
-                String dateEndText = "";
-                if (position.getEndDate() == LocalDate.now()) {
-                    dateEndText = "Сейчас";
-                 } else {
-                     dateEndText = dtf.format(position.getEndDate());
-                 }
-                text += dtf.format(position.getStartDate()) + " - " + dateEndText  + "\t" +
-                position.getPosition() + "\n" + position.getDescription() + "\n";
-            }
-        }
-
-        return text;
+        return organizations.toString();
     }
 }

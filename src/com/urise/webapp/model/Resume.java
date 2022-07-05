@@ -10,22 +10,18 @@ public class Resume implements Comparable<Resume> {
     // Unique identifier
     private final String uuid;
     private final String fullName;
-    private EnumMap<ContactType, String> contacts;
-    private EnumMap<SectionType, Section> sections;
+    private /*final*/ Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
+    private /*final*/ Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
     }
 
     public Resume(String uuid, String fullName) {
-        this.uuid = Objects.requireNonNull(uuid, "uuid must not be null");
-        this.fullName = Objects.requireNonNull(fullName, "fullName must not be null");
-    }
-
-    public Resume(String uuid, String fullName, EnumMap<ContactType, String> contacts, EnumMap<SectionType, Section> sections) {
-        this(uuid, fullName);
-        this.contacts = contacts;
-        this.sections = sections;
+        Objects.requireNonNull(uuid, "uuid must not be null");
+        Objects.requireNonNull(fullName, "fullName must not be null");
+        this.uuid = uuid;
+        this.fullName = fullName;
     }
 
     public String getUuid() {
@@ -36,40 +32,20 @@ public class Resume implements Comparable<Resume> {
         return fullName;
     }
 
-    public void setContacts(EnumMap<ContactType, String> contacts) {
+    public String getContact(ContactType type) {
+        return contacts.get(type);
+    }
+
+    public void setContacts(Map<ContactType, String> contacts) {
         this.contacts = contacts;
     }
 
-    public void setSections(EnumMap<SectionType, Section> sections) {
-        this.sections = sections;
+    public Section getSection(SectionType type) {
+        return sections.get(type);
     }
 
-    public void show() {
-        System.out.println(fullName + "\n");
-
-        for (Map.Entry contact : this.contacts.entrySet()) {
-            if (contact.getKey().toString().equals("TEL") ||
-                    contact.getKey().toString().equals("SKYPE") ||
-                    contact.getKey().toString().equals("EMAIL")
-            ) {
-                System.out.println(((ContactType) contact.getKey()).getTitle() + ":" + contact.getValue());
-            }
-        }
-
-        for (Map.Entry contact : this.contacts.entrySet()) {
-            if (!contact.getKey().toString().equals("TEL") ||
-                    !contact.getKey().toString().equals("SKYPE") ||
-                    !contact.getKey().toString().equals("EMAIL")
-            ) {
-                System.out.println(((ContactType) contact.getKey()).getTitle() + " url = " + contact.getValue());
-            }
-        }
-        System.out.print("\n");
-
-        for (Map.Entry section : this.sections.entrySet()) {
-                System.out.println(((SectionType) section.getKey()).getTitle());
-                System.out.println(section.getValue());
-        }
+    public void setSections(Map<SectionType, Section> sections) {
+        this.sections = sections;
     }
 
     @Override

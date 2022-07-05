@@ -1,27 +1,39 @@
 package com.urise.webapp.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Organization {
-    private String name;
-    private String webSite;
-    private ArrayList<Position> positions;
+    private final Link homePage;
+    private final List<Position> positions;
 
-    public String getName() {
-        return name;
-    }
-
-    public String getWebSite() {
-        return webSite;
-    }
-
-    public ArrayList<Position> getPositions() {
-        return positions;
-    }
-
-    public Organization(String name, String webSite, ArrayList<Position> positions) {
-        this.name = name;
-        this.webSite = webSite;
+    public Organization(String name, String url, List<Position> positions) {
+        this.homePage = new Link(name, url);
         this.positions = positions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Organization that = (Organization) o;
+
+        if (!homePage.equals(that.homePage)) return false;
+        return positions != null ? positions.equals(that.positions) : that.positions == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = homePage.hashCode();
+        result = 31 * result + (positions != null ? positions.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Organization{" +
+                "homePage=" + homePage + "\n" +
+                ", positions=" + positions +
+                '}' + "\n";
     }
 }

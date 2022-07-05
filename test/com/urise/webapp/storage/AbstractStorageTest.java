@@ -11,6 +11,10 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.urise.webapp.ResumeTestData.fillSampleResume;
+
+
+
 public abstract class AbstractStorageTest {
     protected final Storage storage;
 
@@ -23,16 +27,18 @@ public abstract class AbstractStorageTest {
     protected static final String UUID_3 = "uuid3";
     protected static final String UUID_4 = "uuid4";
 
-    protected static final Resume RESUME_1;//= new Resume(UUID_1);
-    protected static final Resume RESUME_2;//= new Resume(UUID_2);
-    protected static final Resume RESUME_3;//= new Resume(UUID_3);
-    protected static final Resume RESUME_4;//= new Resume(UUID_4);
+    protected static final Resume RESUME_1;
+    protected static final Resume RESUME_2;
+    protected static final Resume RESUME_3;
+    protected static final Resume RESUME_4;
+
     static {
-        RESUME_1 = new Resume(UUID_1, "Илья");
-        RESUME_2 = new Resume(UUID_2, "Илья");
-        RESUME_3 = new Resume(UUID_3, "Дима");
-        RESUME_4 = new Resume(UUID_4, "Андрей");
+        RESUME_1 = fillSampleResume(UUID_1, "Илья Эирбасов");
+        RESUME_2 = fillSampleResume(UUID_2, "Дима Боингов");
+        RESUME_3 = fillSampleResume(UUID_3, "Андрей Суперджетов");
+        RESUME_4 = fillSampleResume(UUID_4, "Илья Вертолетов");
     }
+
     @Before
     public void setUp() throws Exception {
         storage.clear();
