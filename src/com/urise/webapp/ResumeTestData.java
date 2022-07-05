@@ -166,7 +166,5 @@ public class ResumeTestData {
     public static void main(String[] args) {
         Resume resume = fillSampleResume("uuid1", "Григорий Кислин");
         showResume(resume);
-
-
     }
 }
