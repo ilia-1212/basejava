@@ -26,20 +26,24 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        if (directory != null ) {
-            for (File file : directory.listFiles(filter)) {
+        for (File file : directory.listFiles(filter)) {
+            if (file != null) {
                 file.delete();
+            }
+            else {
+                throw new StorageException("file is null", "");
             }
         }
     }
 
     @Override
     public int size() {
-        // calc amount files in directory
         int count = 0;
-        if (directory != null ) {
-            for (File file : directory.listFiles(filter)) {
-                count++;
+        for (File file : directory.listFiles(filter)) {
+            if (file != null) {
+                count += file.length();
+            } else {
+                throw new StorageException("file is null", "");
             }
         }
         return count;
@@ -78,7 +82,6 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected Resume doGet(File file) {
-        Resume r;
         try {
             return doRead(file);
         } catch (IOException e) {
@@ -90,15 +93,19 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doDelete(File file) {
-        file.delete();
+        if (!file.delete()) {
+            throw new StorageException("file is null", "");
+        };
     }
 
     @Override
     protected List<Resume> doCopyAll() {
         List<Resume> list = null;
-        if (directory != null ) {
-            for (File file : directory.listFiles(filter)) {
+        for (File file : directory.listFiles(filter)) {
+            if (file != null) {
                 list.add(doGet(file));
+            } else {
+                throw new StorageException("file is null", "");
             }
         }
         return list;
