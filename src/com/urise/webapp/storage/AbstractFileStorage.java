@@ -78,21 +78,29 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected Resume doGet(File file) {
-        // next lession
-        // read resume from file
-        return null;
+        Resume r;
+        try {
+            return doRead(file);
+        } catch (IOException e) {
+            throw new StorageException("IO Error", file.getName(), e);
+        }
     }
+
+    protected abstract Resume doRead(File file) throws IOException;
 
     @Override
     protected void doDelete(File file) {
-        // remove file
         file.delete();
     }
 
     @Override
     protected List<Resume> doCopyAll() {
-        // next lession
-        // list resume from files in directory using doRead method
-        return null;
+        List<Resume> list = null;
+        if (directory != null ) {
+            for (File file : directory.listFiles(filter)) {
+                list.add(doGet(file));
+            }
+        }
+        return list;
     }
 }
