@@ -26,25 +26,26 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        for (File file : directory.listFiles(filter)) {
-            if (file != null) {
+        File[] listFiles = directory.listFiles(filter);
+        if (listFiles != null) {
+            for (File file : directory.listFiles(filter)) {
                 file.delete();
             }
-            else {
-                throw new StorageException("file is null", "");
-            }
+        } else {
+            throw new StorageException("listFiles is null", "");
         }
     }
 
     @Override
     public int size() {
         int count = 0;
-        for (File file : directory.listFiles(filter)) {
-            if (file != null) {
+        File[] listFiles = directory.listFiles(filter);
+        if (listFiles != null) {
+            for (File file : directory.listFiles(filter)) {
                 count += file.length();
-            } else {
-                throw new StorageException("file is null", "");
             }
+        } else {
+            throw new StorageException("listFiles is null", "");
         }
         return count;
     }
@@ -95,18 +96,19 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected void doDelete(File file) {
         if (!file.delete()) {
             throw new StorageException("file is null", "");
-        };
+        }
     }
 
     @Override
     protected List<Resume> doCopyAll() {
         List<Resume> list = null;
-        for (File file : directory.listFiles(filter)) {
-            if (file != null) {
+        File[] listFiles = directory.listFiles(filter);
+        if (listFiles != null) {
+            for (File file : directory.listFiles(filter)) {
                 list.add(doGet(file));
-            } else {
-                throw new StorageException("file is null", "");
             }
+        } else {
+            throw new StorageException("listFiles is null", "");
         }
         return list;
     }
