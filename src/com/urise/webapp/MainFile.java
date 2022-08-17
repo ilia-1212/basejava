@@ -1,48 +1,35 @@
 package com.urise.webapp;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Objects;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public class MainFile {
-    private static File[] diveToDir(File file) {
-        if (!file.isDirectory()) {
-           System.out.println("    file " + file.getName());
-            return null;
-        } else {
-            System.out.println("Directory " + file.getName());
-        }
+    public static void main(String[] args) throws IOException {
+        Path dir_path = Paths.get("./src/com/urise/webapp");
+        String[] paths = dir_path.toFile().list();
 
-        File[] list = file.listFiles();
-        for(File fl : list) {
-            diveToDir(fl);
-        }
-        return list;
-    }
+        Files.walkFileTree(dir_path, new SimpleFileVisitor<Path>() {
 
-    public static void main(String[] args){
-        String filePath = ".\\.gitignore";
-        File file = new File(filePath);
-        try {
-            System.out.println(file.getCanonicalPath());
-        } catch (IOException e) {
-            throw new RuntimeException("Error", e);
-        }
+            String getDirectoryName(Path dir) {
+                int count = dir.getNameCount() - dir_path.getNameCount() + 1;
+                count += dir.getFileName().toString().length();
+                String text = String.format("%" + count + "s", dir.toFile().isDirectory() ? '[' + dir.getFileName().toString() + ']' : dir.getFileName().toString());
+                text = text.replaceAll("[\\s]", "-");
+                return text;
+            }
 
-        File dir = new File("./src/com/urise/webapp");
-        System.out.println(dir.isDirectory());
-        String[] list = dir.list();
-        for (String name : Objects.requireNonNull(list)) {
-            System.out.println(name);
-        }
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                System.out.println(getDirectoryName(dir));
+                return super.preVisitDirectory(dir, attrs);
+            }
 
-        try (FileInputStream fis = new FileInputStream(filePath)) {
-            System.out.println(fis.read());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        diveToDir(new File(".\\src"));
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                System.out.println(getDirectoryName(file));
+                return super.visitFile(file, attrs);
+            }
+        });
     }
 }

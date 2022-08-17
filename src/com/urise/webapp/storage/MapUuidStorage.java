@@ -3,12 +3,12 @@ package com.urise.webapp.storage;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class MapUuidStorage extends AbstractStorage<String> {
-    private Map<String, Resume> storage = new TreeMap<>();
+    private Map<String, Resume> storage = new HashMap<>();
 
     @Override
     protected String getSearchKey(String uuid) {
@@ -17,7 +17,7 @@ public class MapUuidStorage extends AbstractStorage<String> {
 
     @Override
     protected void doUpdate(String uuid, Resume r) {
-                        storage.put(uuid, r);
+        storage.put(uuid, r);
     }
 
     @Override

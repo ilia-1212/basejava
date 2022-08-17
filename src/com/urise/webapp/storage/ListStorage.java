@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 import java.util.*;
 
 public class ListStorage extends AbstractStorage<Integer> {
-    private List<Resume> storage = new LinkedList<>();
+    private List<Resume> storage = new ArrayList<>();
 
     @Override
     protected Integer getSearchKey(String key) {

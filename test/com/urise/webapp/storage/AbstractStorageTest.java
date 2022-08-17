@@ -8,19 +8,17 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.urise.webapp.ResumeTestData.fillSampleResume;
 
-
-
 public abstract class AbstractStorageTest {
-    protected final Storage storage;
+    protected static final File STORAGE_DIR = new File("./src/com/urise/webapp/filestorage");
 
-    protected AbstractStorageTest(Storage storage) {
-        this.storage = storage;
-    }
+    protected Storage storage;
 
     protected static final String UUID_1 = "uuid1";
     protected static final String UUID_2 = "uuid2";
@@ -39,6 +37,10 @@ public abstract class AbstractStorageTest {
         RESUME_4 = fillSampleResume(UUID_4, "Илья Вертолетов");
     }
 
+    protected AbstractStorageTest(Storage storage) {
+        this.storage = storage;
+    }
+
     @Before
     public void setUp() throws Exception {
         storage.clear();
@@ -49,7 +51,7 @@ public abstract class AbstractStorageTest {
 
     @After
     public void exitTest() throws Exception {
-        storage.clear();
+       // storage.clear();
     }
 
     @Test
@@ -66,9 +68,9 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() throws Exception {
-        Resume r = new Resume(UUID_1,"Старк");
-        storage.update(r);
-        assertGet(r);
+        Resume newResume = new Resume(UUID_1,"Старк");
+        storage.update(newResume);
+        Assert.assertTrue(newResume.equals(storage.get(UUID_1)));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -123,7 +125,7 @@ public abstract class AbstractStorageTest {
         Assert.assertEquals(r, storage.get(r.getUuid()));
     }
 
-    private void assertSize(int expected) {
+    private void assertSize(int expected) throws IOException {
         Assert.assertEquals(expected, storage.size());
     }
 }

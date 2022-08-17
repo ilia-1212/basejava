@@ -4,10 +4,12 @@ import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.ArrayStorage;
 import com.urise.webapp.storage.Storage;
 
+import java.io.IOException;
+
 public class MainTestListStorage {
    final static Storage ARRAY_STORAGE = new ArrayStorage();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Resume resume1 = new Resume("52", "Илья");
         Resume resume2 = new Resume("51", "Дима");
         Resume resume3 = new Resume("50" ,"Дима");
