@@ -26,6 +26,11 @@ public class FileStorage extends AbstractStorage<File> {
         this.directory = directory;
     }
 
+    public FileStorage(File directory,Serializer serializer) {
+        this(directory);
+        setSerializer(serializer);
+    }
+
     public void setSerializer(Serializer serializer) {
         this.serializer = serializer;
     }

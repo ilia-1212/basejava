@@ -7,10 +7,6 @@ import java.io.*;
 
 public class ObjectStreamPathStorage implements Serializer {
 
-    /*public ObjectStreamPathStorage(String directory) {
-        super(directory);
-    }*/
-
     @Override
     public void doWrite(OutputStream os, Resume r) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {

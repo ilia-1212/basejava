@@ -6,9 +6,6 @@ import com.urise.webapp.model.Resume;
 import java.io.*;
 
 public class ObjectStreamStorage  implements Serializer {
-    /*public ObjectStreamStorage(File directory) {
-        super(directory);
-    }*/
 
     @Override
     public void doWrite(OutputStream os, Resume r) throws IOException {
