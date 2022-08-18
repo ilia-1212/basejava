@@ -2,16 +2,20 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.serializer.ObjectStreamStorage;
+import com.urise.webapp.storage.serializer.Serializer;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
     private File directory;
+    private Serializer serializer;
 
-    protected AbstractFileStorage(File directory) {
+    public FileStorage(File directory) {
+        setSerializer(new ObjectStreamStorage());
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not directory");
@@ -22,9 +26,17 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         this.directory = directory;
     }
 
-    protected abstract void doWrite(OutputStream file, Resume r) throws IOException;
+    public void setSerializer(Serializer serializer) {
+        this.serializer = serializer;
+    }
 
-    protected abstract Resume doRead(InputStream file) throws IOException;
+    protected void doWrite(OutputStream os, Resume r) throws IOException {
+        serializer.doWrite(os, r);
+    }
+
+    protected Resume doRead(InputStream is) throws IOException {
+        return serializer.doRead(is);
+    }
 
     @Override
     public void clear() {

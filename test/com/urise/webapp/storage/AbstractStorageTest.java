@@ -51,7 +51,7 @@ public abstract class AbstractStorageTest {
 
     @After
     public void exitTest() throws Exception {
-       // storage.clear();
+        storage.clear();
     }
 
     @Test

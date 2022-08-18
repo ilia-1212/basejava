@@ -1,8 +1,8 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.ContextStorage;
-import com.urise.webapp.storage.ObjectStreamPathStorage;
+import com.urise.webapp.storage.FileStorage;
+import com.urise.webapp.storage.Storage;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,16 +11,13 @@ import java.io.IOException;
  * Test for your com.urise.webapp.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
-    private static  ContextStorage ARRAY_STORAGE = null;
+    private static Storage ARRAY_STORAGE = new FileStorage(new File("./src/com/urise/webapp/filestorage"));
 
     public static void main(String[] args) throws IOException {
         Resume r1 = new Resume("uuid4", "Сентяков Илья А");
         Resume r2 = new Resume("uuid1", "Петров Дима А");
         Resume r3 = new Resume("uuid5", "Петров Андрей В");
         Resume r4 = new Resume("uuid4", "Летов Дима В");
-
-        ARRAY_STORAGE = new ContextStorage();
-        ARRAY_STORAGE.setContextStorage((new ObjectStreamPathStorage(new File("./src/com/urise/webapp/filestorage").getPath())));
 
         ARRAY_STORAGE.save(r1);
         ARRAY_STORAGE.save(r2);

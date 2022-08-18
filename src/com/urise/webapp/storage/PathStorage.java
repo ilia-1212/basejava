@@ -2,6 +2,8 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.serializer.ObjectStreamPathStorage;
+import com.urise.webapp.storage.serializer.Serializer;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -12,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
+    private Serializer serializer;
 
-    protected AbstractPathStorage(String dir) {
+    public PathStorage(String dir) {
+        setSerializer(new ObjectStreamPathStorage());
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
@@ -23,14 +27,22 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         }
     }
 
-    protected abstract void doWrite(OutputStream os, Resume r) throws IOException;
+    public void setSerializer(Serializer serializer) {
+        this.serializer = serializer;
+    }
 
-    protected abstract Resume doRead(InputStream is) throws IOException;
+    protected void doWrite(OutputStream os, Resume r) throws IOException {
+        serializer.doWrite(os, r);
+    }
+
+    protected Resume doRead(InputStream is) throws IOException {
+        return serializer.doRead(is);
+    }
 
     @Override
     public void clear() {
         try {
-           Files.list(directory).forEach(this::doDelete);
+           Files.list(directory).forEach(path -> doDelete(path));
         } catch (IOException e) {
             throw new StorageException("Directory delete error", null);
         }
