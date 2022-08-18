@@ -35,14 +35,6 @@ public class PathStorage extends AbstractStorage<Path> {
         this.serializer = serializer;
     }
 
-    protected void doWrite(OutputStream os, Resume r) throws IOException {
-        serializer.doWrite(os, r);
-    }
-
-    protected Resume doRead(InputStream is) throws IOException {
-        return serializer.doRead(is);
-    }
-
     @Override
     public void clear() {
         try {
@@ -65,7 +57,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected void doUpdate(Path path, Resume r) {
         try {
-            doWrite(new BufferedOutputStream(Files.newOutputStream(path, LinkOption.NOFOLLOW_LINKS)), r);
+            serializer.doWrite(new BufferedOutputStream(Files.newOutputStream(path, LinkOption.NOFOLLOW_LINKS)), r);
         } catch (IOException e) {
             throw new StorageException("Path write error "  + path.toAbsolutePath(), r.getUuid(), e);
         }
@@ -89,7 +81,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return doRead(new BufferedInputStream((Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS))));
+            return serializer.doRead(new BufferedInputStream((Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS))));
         } catch (IOException e) {
             throw new StorageException("Path read error " + path.toAbsolutePath(), path.getFileName().toString(), e);
         }

@@ -35,14 +35,6 @@ public class FileStorage extends AbstractStorage<File> {
         this.serializer = serializer;
     }
 
-    protected void doWrite(OutputStream os, Resume r) throws IOException {
-        serializer.doWrite(os, r);
-    }
-
-    protected Resume doRead(InputStream is) throws IOException {
-        return serializer.doRead(is);
-    }
-
     @Override
     public void clear() {
         File[] files = getFiles();
@@ -64,7 +56,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected void doUpdate(File file, Resume r) {
         try {
-            doWrite(new BufferedOutputStream(new FileOutputStream(file)), r);
+            serializer.doWrite(new BufferedOutputStream(new FileOutputStream(file)), r);
         } catch (IOException e) {
             throw new StorageException("File write error", r.getUuid(), e);
         }
@@ -88,7 +80,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File file) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(file)));
+            return serializer.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
