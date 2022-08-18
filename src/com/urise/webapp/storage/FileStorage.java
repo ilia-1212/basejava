@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
-    private File directory;
+    private final File directory;
     private Serializer serializer;
 
     public FileStorage(File directory) {
@@ -45,10 +45,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("Directory read error", null);
-        }
+        File[] files = getFiles();
         for (File file : files) {
             doDelete(file);
         }
@@ -56,11 +53,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        String[] files = directory.list();
-        if (files == null) {
-            throw new StorageException("Directory read error", null);
-        }
-        return files.length;
+        return getFiles().length;
     }
 
     @Override
@@ -110,14 +103,19 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> doCopyAll() {
+        File[] files = getFiles();
+        List<Resume> listResume = new ArrayList<>();
+        for (File file : files) {
+            listResume.add(doGet(file));
+        }
+        return listResume;
+    }
+
+    private File[] getFiles() {
         File[] files = directory.listFiles();
         if (files == null) {
             throw new StorageException("Directory read error", null);
         }
-        List<Resume> list = new ArrayList<>(files.length);
-        for (File file : files) {
-            list.add(doGet(file));
-        }
-        return list;
+        return files;
     }
 }
