@@ -1,18 +1,17 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.FileStorage;
+import com.urise.webapp.storage.PathStorage;
 import com.urise.webapp.storage.Storage;
-import com.urise.webapp.storage.serializer.ObjectStreamStorage;
+import com.urise.webapp.storage.serializer.ObjectStreamSerializer;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
  * Test for your com.urise.webapp.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
-    private static Storage ARRAY_STORAGE = new FileStorage(new File("./src/com/urise/webapp/filestorage"), new ObjectStreamStorage());
+    private static Storage ARRAY_STORAGE = new PathStorage( ("./src/com/urise/webapp/filestorage"), new ObjectStreamSerializer());
 
     public static void main(String[] args) throws IOException {
         Resume r1 = new Resume("uuid4", "Сентяков Илья А");

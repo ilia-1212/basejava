@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MapUuidStorage extends AbstractStorage<String> {
-    private final Map<String, Resume> storage = new HashMap<>();
+    private final Map<String, Resume> map = new HashMap<>();
 
     @Override
     protected String getSearchKey(String uuid) {
@@ -17,41 +17,41 @@ public class MapUuidStorage extends AbstractStorage<String> {
 
     @Override
     protected void doUpdate(String uuid, Resume r) {
-        storage.put(uuid, r);
+        map.put(uuid, r);
     }
 
     @Override
     protected boolean isExist(String uuid) {
-        return storage.containsKey(uuid);
+        return map.containsKey(uuid);
     }
 
     @Override
     protected void doSave(String uuid, Resume r) {
-        storage.put(uuid, r);
+        map.put(uuid, r);
     }
 
     @Override
     protected Resume doGet(String uuid) {
-        return storage.get(uuid);
+        return map.get(uuid);
     }
 
     @Override
     protected void doDelete(String uuid) {
-        storage.remove(uuid);
+        map.remove(uuid);
     }
 
     @Override
     public void clear() {
-        storage.clear();
+        map.clear();
     }
 
     @Override
-    protected List<Resume> doCopyAll() {
-        return new ArrayList<>(storage.values());
+    public List<Resume> doCopyAll() {
+        return new ArrayList<>(map.values());
     }
 
     @Override
     public int size() {
-        return storage.size();
+        return map.size();
     }
 }

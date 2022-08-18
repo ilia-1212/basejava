@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage<Integer> {
-    private final List<Resume> storage = new ArrayList<>();
+    private final List<Resume> list = new ArrayList<>();
 
     @Override
-    protected Integer getSearchKey(String key) {
-        for (int i = 0; i < storage.size(); i++) {
-            if (key.equals(storage.get(i).getUuid())) {
+    protected Integer getSearchKey(String uuid) {
+        for (int i = 0; i < list.size(); i++) {
+            if (uuid.equals(list.get(i).getUuid())) {
                 return i;
             }
         }
@@ -19,42 +19,42 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected boolean isExist(Integer key) {
-        return key != null;
+    protected boolean isExist(Integer searchKey) {
+        return searchKey != null;
     }
 
     @Override
-    protected void doUpdate(Integer key, Resume r) {
-        storage.set(key, r);
+    protected void doUpdate(Integer searchKey, Resume r) {
+        list.set(searchKey, r);
     }
 
     @Override
-    protected void doSave(Integer key, Resume r) {
-        storage.add(r);
+    protected void doSave(Integer searchKey, Resume r) {
+        list.add(r);
     }
 
     @Override
-    protected Resume doGet(Integer key) {
-        return storage.get(key);
+    protected Resume doGet(Integer searchKey) {
+        return list.get(searchKey);
     }
 
     @Override
-    protected void doDelete(Integer key) {
-        storage.remove((key).intValue());
+    protected void doDelete(Integer searchKey) {
+        list.remove((searchKey).intValue());
     }
 
     @Override
     public void clear() {
-        storage.clear();
+        list.clear();
     }
 
     @Override
     protected List<Resume> doCopyAll() {
-        return new ArrayList<>(List.copyOf(storage));
+        return new ArrayList<>(list);
     }
 
     @Override
     public int size() {
-        return storage.size();
+        return list.size();
     }
 }

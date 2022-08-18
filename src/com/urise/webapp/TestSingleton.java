@@ -20,8 +20,8 @@ public class TestSingleton {
         Singleton instance = Singleton.valueOf("INSTANCE");
         System.out.println(instance.ordinal());
 
-        for (SectionType st : SectionType.values()) {
-            System.out.println(st.getTitle());
+        for (SectionType type : SectionType.values()) {
+            System.out.println(type.getTitle());
         }
     }
 

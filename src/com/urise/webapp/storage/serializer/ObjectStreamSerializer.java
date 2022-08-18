@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage  implements Serializer {
+public class ObjectStreamSerializer implements StreamSerializer {
 
     @Override
     public void doWrite(OutputStream os, Resume r) throws IOException {
@@ -19,7 +19,7 @@ public class ObjectStreamStorage  implements Serializer {
         try (ObjectInputStream ois = new ObjectInputStream(is)) {
             return (Resume) ois.readObject();
         } catch (ClassNotFoundException e) {
-            throw new StorageException("Error read resume",null, e);
+            throw new StorageException("Error read resume", e);
         }
     }
 }
