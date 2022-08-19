@@ -15,9 +15,12 @@ import java.util.*;
 public class Resume implements Comparable<Resume>, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
     // Unique identifier
     private String uuid;
+
     private String fullName;
+
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
     private final Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
 
@@ -51,12 +54,12 @@ public class Resume implements Comparable<Resume>, Serializable {
         return sections.get(type);
     }
 
-    public void addContacts(ContactType type, String value) {
+    public void addContact(ContactType type, String value) {
         contacts.put(type, value);
     }
 
-    public void addSections(SectionType type, Section value) {
-        sections.put(type, value);
+    public void addSection(SectionType type, Section section) {
+        sections.put(type, section);
     }
 
     @Override

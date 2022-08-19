@@ -8,9 +8,10 @@ public class XmlParser {
     private final Marshaller marshaller;
     private final Unmarshaller unmarshaller;
 
-    public XmlParser(Class... classes) {
+    public XmlParser(Class... classesToBeBound) {
         try {
-            JAXBContext ctx = JAXBContext.newInstance(classes);
+            JAXBContext ctx = JAXBContext.newInstance(classesToBeBound);
+
             marshaller = ctx.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
             marshaller.setProperty(Marshaller.JAXB_ENCODING,"UTF-8");
