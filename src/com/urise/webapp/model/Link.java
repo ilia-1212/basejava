@@ -12,7 +12,7 @@ public class Link implements Serializable {
 
     private String name;
     private String url;
-
+    
     public Link() {
     }
 
@@ -44,6 +44,7 @@ public class Link implements Serializable {
 
         if (!name.equals(link.name)) return false;
         return url != null ? url.equals(link.url) : link.url == null;
+
     }
 
     @Override

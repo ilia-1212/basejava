@@ -36,7 +36,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     public int size() {
-        return getFilesList().toList().size();
+        return (int) getFilesList().count();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             streamSerializer.doWrite(new BufferedOutputStream(Files.newOutputStream(path)), r);
         } catch (IOException e) {
-            throw new StorageException("Path write error " + path, getFileName(path), e);
+            throw new StorageException("Path write error", r.getUuid(), e);
         }
     }
 
@@ -71,9 +71,9 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return streamSerializer.doRead(new BufferedInputStream((Files.newInputStream(path))));
+            return streamSerializer.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
-            throw new StorageException("Path read error " + path, getFileName(path), e);
+            throw new StorageException("Path read error", getFileName(path), e);
         }
     }
 
@@ -82,7 +82,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            throw new StorageException("Path delete error " + path, getFileName(path), e);
+            throw new StorageException("Path delete error", getFileName(path), e);
         }
     }
 

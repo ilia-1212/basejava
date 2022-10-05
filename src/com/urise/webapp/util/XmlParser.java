@@ -1,6 +1,9 @@
 package com.urise.webapp.util;
 
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.io.Reader;
 import java.io.Writer;
 
@@ -15,6 +18,7 @@ public class XmlParser {
             marshaller = ctx.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
             marshaller.setProperty(Marshaller.JAXB_ENCODING,"UTF-8");
+//            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 
             unmarshaller = ctx.createUnmarshaller();
         } catch (JAXBException e) {

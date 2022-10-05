@@ -35,6 +35,7 @@ public class OrganizationSection extends Section {
         OrganizationSection that = (OrganizationSection) o;
 
         return organizations.equals(that.organizations);
+
     }
 
     @Override

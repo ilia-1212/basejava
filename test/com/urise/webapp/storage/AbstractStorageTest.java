@@ -2,18 +2,15 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.Resume;
-import org.junit.After;
+import com.urise.webapp.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.urise.webapp.ResumeTestData.fillSampleResume;
 
 public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = new File("./src/com/urise/webapp/filestorage");
@@ -31,10 +28,36 @@ public abstract class AbstractStorageTest {
     protected static final Resume RESUME_4;
 
     static {
-        RESUME_1 = fillSampleResume(UUID_1, "Илья Эирбасов");
-        RESUME_2 = fillSampleResume(UUID_2, "Дима Боингов");
-        RESUME_3 = fillSampleResume(UUID_3, "Андрей Суперджетов");
-        RESUME_4 = fillSampleResume(UUID_4, "Илья Вертолетов");
+        RESUME_1 = new Resume(UUID_1, "Илья Эирбасов");
+        RESUME_2 = new Resume(UUID_2, "Дима Боингов");
+        RESUME_3 = new Resume(UUID_3, "Андрей Суперджетов");
+        RESUME_4 = new Resume(UUID_4, "Илья Вертолетов");
+
+        RESUME_1.addContact(ContactType.MAIL, "mail1@ya.ru");
+        RESUME_1.addContact(ContactType.PHONE, "11111");
+        RESUME_1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
+        RESUME_1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
+        RESUME_1.addSection(SectionType.ACHIEVEMENT, new ListSection("Achivment11", "Achivment12", "Achivment13"));
+        RESUME_1.addSection(SectionType.QUALIFICATIONS, new ListSection("Java", "SQL", "JavaScript"));
+        RESUME_1.addSection(SectionType.EXPERIENCE,
+                new OrganizationSection(
+                        new Organization("Organization11", "http://Organization11.ru",
+                                new Organization.Position(2005, Month.JANUARY, "position1", "content1"),
+                                new Organization.Position(2001, Month.MARCH, 2005, Month.JANUARY, "position2", "content2"))));
+        RESUME_1.addSection(SectionType.EDUCATION,
+                new OrganizationSection(
+                        new Organization("Institute", null,
+                                new Organization.Position(1996, Month.JANUARY, 2000, Month.DECEMBER, "aspirant", null),
+                                new Organization.Position(2001, Month.MARCH, 2005, Month.JANUARY, "student", "IT facultet")),
+                        new Organization("Organization12", "http://Organization12.ru")));
+        RESUME_2.addContact(ContactType.SKYPE, "skype2");
+        RESUME_2.addContact(ContactType.PHONE, "22222");
+
+        RESUME_1.addSection(SectionType.EXPERIENCE,
+                new OrganizationSection(
+                        new Organization("Organization2", "http://Organization2.ru",
+                                new Organization.Position(2015, Month.JANUARY, "position1", "content1"))));
+
     }
 
     protected AbstractStorageTest(Storage storage) {
@@ -49,10 +72,10 @@ public abstract class AbstractStorageTest {
         storage.save(RESUME_3);
     }
 
-    @After
-    public void exitTest() throws Exception {
-        storage.clear();
-    }
+//    @After
+//    public void exitTest() throws Exception {
+//       storage.clear();
+//    }
 
     @Test
     public void size() throws Exception {
@@ -125,7 +148,7 @@ public abstract class AbstractStorageTest {
         Assert.assertEquals(r, storage.get(r.getUuid()));
     }
 
-    private void assertSize(int expected) throws IOException {
-        Assert.assertEquals(expected, storage.size());
+    private void assertSize(int size) {
+        Assert.assertEquals(size, storage.size());
     }
 }
