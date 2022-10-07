@@ -27,34 +27,33 @@ public class DataStreamSerializer implements StreamSerializer  {
             writer.writeInt(sections.size());
 
             for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
-                writer.writeUTF(entry.getValue().getClass().getSimpleName());
                 writer.writeUTF(entry.getKey().name());
 
-                switch (entry.getValue().getClass().getSimpleName()) {
-                    case "TextSection" -> {
+                switch (entry.getKey() ) {
+                    case OBJECTIVE, PERSONAL -> {
                         TextSection textSection = (TextSection) entry.getValue();
                         writer.writeUTF(textSection.getContent());
                     }
-                    case "ListSection" -> {
+                    case ACHIEVEMENT, QUALIFICATIONS -> {
                         ListSection listSection = (ListSection) entry.getValue();
                         writer.writeInt(listSection.getItems().size());
                         for (String item: listSection.getItems()) {
-                            writeStr(item, writer);
+                            writer.writeUTF(item);
                         }
                     }
-                    case "OrganizationSection" -> {
+                    case EXPERIENCE, EDUCATION -> {
                         OrganizationSection organizationSection = (OrganizationSection) entry.getValue();
                         writer.writeInt(organizationSection.getOrganizations().size());
                         for (Organization org: organizationSection.getOrganizations()) {
-                            writeStr(org.getHomePage().getName(), writer);
-                            writeStr(org.getHomePage().getUrl(), writer);
+                            writer.writeUTF(org.getHomePage().getName());
+                            writeStrNan(org.getHomePage().getUrl(), writer);
 
                             writer.writeInt(org.getPositions().size());
                             for(Organization.Position position : org.getPositions()) {
-                                writeStr(position.getTitle(), writer);
-                                writeStr(position.getDescription(), writer);
-                                writeStr(position.getStartDate().toString(), writer) ;
-                                writeStr(position.getEndDate().toString(), writer);
+                                writer.writeUTF(position.getTitle());
+                                writeStrNan(position.getDescription(), writer);
+                                writer.writeUTF(position.getStartDate().toString()) ;
+                                writer.writeUTF(position.getEndDate().toString());
                             }
                         }
                     }
@@ -67,10 +66,8 @@ public class DataStreamSerializer implements StreamSerializer  {
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream reader = new DataInputStream(new ObjectInputStream(is))) {
             Resume resume;
-            String uuid = readStr(reader);
-            String fullName = readStr(reader);
 
-            resume = new Resume(uuid, fullName);
+            resume = new Resume(reader.readUTF(), reader.readUTF());
             int contactsSize = reader.readInt();
 
             for (int i = 0; i < contactsSize; i++) {
@@ -78,15 +75,12 @@ public class DataStreamSerializer implements StreamSerializer  {
             }
 
             int sectionsSize = reader.readInt();
-            String sectiontClassStr;
-            String sectionStr;
             for (int i = 0; i < sectionsSize; i++) {
-                sectiontClassStr = readStr(reader);
-                sectionStr = readStr(reader);
+                String sectionStr = reader.readUTF();
 
-                switch (sectiontClassStr) {
-                    case  "TextSection" -> resume.addSection(SectionType.valueOf(sectionStr), new TextSection(reader.readUTF()));
-                    case  "ListSection" -> {
+                switch (SectionType.valueOf(sectionStr)) {
+                    case  PERSONAL,OBJECTIVE -> resume.addSection(SectionType.valueOf(sectionStr), new TextSection(reader.readUTF()));
+                    case  ACHIEVEMENT, QUALIFICATIONS -> {
                         int itemsSize = reader.readInt();
                         List<String> items = new ArrayList<>();
                         for(int j = 0;  j < itemsSize; j++) {
@@ -94,7 +88,7 @@ public class DataStreamSerializer implements StreamSerializer  {
                         }
                         resume.addSection(SectionType.valueOf(sectionStr), new ListSection(items));
                     }
-                    case  "OrganizationSection" -> {
+                    case  EXPERIENCE, EDUCATION-> {
                         int orgsSize = reader.readInt();
                         String homePageName;
                         String homePageURL;
@@ -105,14 +99,14 @@ public class DataStreamSerializer implements StreamSerializer  {
                         int positionSize;
                         List<Organization> organizations = new ArrayList<>();
                         for(int j = 0;  j < orgsSize; j++) {
-                            homePageName = readStr(reader);
-                            homePageURL = readStr(reader);
+                            homePageName = reader.readUTF();
+                            homePageURL = readStrNan(reader);
                             positionSize = reader.readInt();
                             List<Organization.Position> positions = new ArrayList<>();
 
                             for(int k = 0; k < positionSize; k++) {
-                                positionTitle = readStr(reader);
-                                positionDescription = readStr(reader);
+                                positionTitle = reader.readUTF();
+                                positionDescription = readStrNan(reader);
                                 positionStartDate = LocalDate.parse(reader.readUTF());
                                 positionEndDate  = LocalDate.parse(reader.readUTF());
 
@@ -127,19 +121,19 @@ public class DataStreamSerializer implements StreamSerializer  {
             return resume;
         }
     }
-    private static void writeStr(String str, DataOutputStream dos ) throws IOException {
+    private static void writeStrNan(String str, DataOutputStream dos ) throws IOException {
         if (!(str == null)) {
-            dos.writeUTF(str);
-        } else {
+           dos.writeUTF(str);
+       } else {
             dos.writeUTF("");
         }
     }
 
-    private static String readStr(DataInputStream dis ) throws IOException {
+    private static String readStrNan(DataInputStream dis ) throws IOException {
         String str = dis.readUTF();
         if (str.length() == 0) {
             str = null;
-        }
+       }
         return str;
     }
 }
