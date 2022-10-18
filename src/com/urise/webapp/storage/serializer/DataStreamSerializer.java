@@ -1,13 +1,13 @@
 package com.urise.webapp.storage.serializer;
 
 
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.*;
+import com.urise.webapp.util.ConsumerWithExeption;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataStreamSerializer implements StreamSerializer  {
     @Override
@@ -18,10 +18,27 @@ public class DataStreamSerializer implements StreamSerializer  {
 
             Map<ContactType, String> contacts = r.getContacts();
             writer.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-                writer.writeUTF(entry.getKey().name());
-                writer.writeUTF(entry.getValue());
-            }
+
+//            Consumer<Map.Entry<ContactType, String>> action = (entry) -> {
+//                try {
+//                    writer.writeUTF(entry.getKey().toString());
+//                    writer.writeUTF(entry.getValue());
+//                } catch (IOException e) {
+//                    throw new StorageException("DataStream write error", e);
+//                }
+//            };
+//            contacts.entrySet().forEach(action);
+
+            ConsumerWithExeption action = (entry) -> {
+                try {
+                    writer.writeUTF(entry.getKey().toString());
+                    writer.writeUTF(entry.);
+                } catch (IOException e) {
+                    throw new StorageException("DataStream write error", e);
+                }
+            };
+
+            writeWithExeption(contacts.entrySet(), writer, action);
 
             Map<SectionType, Section> sections = r.getSections();
             writer.writeInt(sections.size());
@@ -65,9 +82,7 @@ public class DataStreamSerializer implements StreamSerializer  {
     @Override
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream reader = new DataInputStream(new ObjectInputStream(is))) {
-            Resume resume;
-
-            resume = new Resume(reader.readUTF(), reader.readUTF());
+            Resume resume = new Resume(reader.readUTF(), reader.readUTF());
             int contactsSize = reader.readInt();
 
             for (int i = 0; i < contactsSize; i++) {
@@ -90,25 +105,18 @@ public class DataStreamSerializer implements StreamSerializer  {
                     }
                     case  EXPERIENCE, EDUCATION-> {
                         int orgsSize = reader.readInt();
-                        String homePageName;
-                        String homePageURL;
-                        LocalDate positionStartDate;
-                        LocalDate positionEndDate;
-                        String positionTitle;
-                        String positionDescription;
-                        int positionSize;
                         List<Organization> organizations = new ArrayList<>();
                         for(int j = 0;  j < orgsSize; j++) {
-                            homePageName = reader.readUTF();
-                            homePageURL = readStrNan(reader);
-                            positionSize = reader.readInt();
+                            String homePageName = reader.readUTF();
+                            String homePageURL = readStrNan(reader);
+                            int positionSize = reader.readInt();
                             List<Organization.Position> positions = new ArrayList<>();
 
                             for(int k = 0; k < positionSize; k++) {
-                                positionTitle = reader.readUTF();
-                                positionDescription = readStrNan(reader);
-                                positionStartDate = LocalDate.parse(reader.readUTF());
-                                positionEndDate  = LocalDate.parse(reader.readUTF());
+                                String positionTitle = reader.readUTF();
+                                String positionDescription = readStrNan(reader);
+                                LocalDate positionStartDate = LocalDate.parse(reader.readUTF());
+                                LocalDate positionEndDate  = LocalDate.parse(reader.readUTF());
 
                                 positions.add(new Organization.Position(positionStartDate, positionEndDate, positionTitle, positionDescription));
                             }
@@ -122,11 +130,7 @@ public class DataStreamSerializer implements StreamSerializer  {
         }
     }
     private static void writeStrNan(String str, DataOutputStream dos ) throws IOException {
-        if (!(str == null)) {
-           dos.writeUTF(str);
-       } else {
-            dos.writeUTF("");
-        }
+        dos.writeUTF((!(str == null)) ? str : "");
     }
 
     private static String readStrNan(DataInputStream dis ) throws IOException {
@@ -135,5 +139,17 @@ public class DataStreamSerializer implements StreamSerializer  {
             str = null;
        }
         return str;
+    }
+
+    private static void writeWithExeption(Collection collection, DataOutputStream writer, ConsumerWithExeption consumer) throws IOException {
+
+      //  collection.forEach(consumer);
+        Map.Entry entry = (Map.Entry<ContactType, String>) collection;
+        Objects.requireNonNull(consumer);
+        for (Object t : collection) {
+            consumer.accept(t);
+        }
+
+
     }
 }
