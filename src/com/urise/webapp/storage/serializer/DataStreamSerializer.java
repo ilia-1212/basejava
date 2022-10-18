@@ -31,8 +31,9 @@ public class DataStreamSerializer implements StreamSerializer  {
 
             ConsumerWithExeption action = (entry) -> {
                 try {
-                    writer.writeUTF(entry.getKey().toString());
-                    writer.writeUTF(entry.);
+                    Map.Entry  entry_ = (Map.Entry<ContactType, String>) entry;
+                    writer.writeUTF(entry_.getKey().toString());
+                    writer.writeUTF(entry_.getValue().toString());
                 } catch (IOException e) {
                     throw new StorageException("DataStream write error", e);
                 }
@@ -143,13 +144,11 @@ public class DataStreamSerializer implements StreamSerializer  {
 
     private static void writeWithExeption(Collection collection, DataOutputStream writer, ConsumerWithExeption consumer) throws IOException {
 
-      //  collection.forEach(consumer);
-        Map.Entry entry = (Map.Entry<ContactType, String>) collection;
+        //collection.forEach(consumer);
+        //Map.Entry entry = (Map.Entry<ContactType, String>) collection;
         Objects.requireNonNull(consumer);
         for (Object t : collection) {
             consumer.accept(t);
         }
-
-
     }
 }
