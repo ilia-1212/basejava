@@ -84,7 +84,7 @@ public class DataStreamSerializer implements StreamSerializer  {
                         }
                         resume.addSection(SectionType.valueOf(sectionStr), new ListSection(items));
                     }
-                    case  EXPERIENCE, EDUCATION-> {
+                    case  EXPERIENCE, EDUCATION -> {
                         int orgsSize = reader.readInt();
                         List<Organization> organizations = new ArrayList<>();
                         for(int j = 0;  j < orgsSize; j++) {
