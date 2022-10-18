@@ -8,6 +8,7 @@ import com.urise.webapp.util.ConsumerWithExeption;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class DataStreamSerializer implements StreamSerializer  {
     @Override
@@ -19,27 +20,31 @@ public class DataStreamSerializer implements StreamSerializer  {
             Map<ContactType, String> contacts = r.getContacts();
             writer.writeInt(contacts.size());
 
-//            Consumer<Map.Entry<ContactType, String>> action = (entry) -> {
-//                try {
-//                    writer.writeUTF(entry.getKey().toString());
-//                    writer.writeUTF(entry.getValue());
-//                } catch (IOException e) {
-//                    throw new StorageException("DataStream write error", e);
-//                }
-//            };
-//            contacts.entrySet().forEach(action);
+            Consumer<Map.Entry<ContactType, String>> action = (entry) -> {
+                try {
+                   writer.writeUTF(entry.getKey().toString());
+                   writer.writeUTF(entry.getValue());
+                   // temporary line
+                   throw new IOException();
+                } catch (IOException e) {
+                    throw new StorageException("DataStream writeUTF error", e);
+                }
+            };
+          // contacts.entrySet().forEach(action);
 
-            ConsumerWithExeption action = (entry) -> {
+            ConsumerWithExeption action1 = (entry) -> {
                 try {
                     Map.Entry  entry_ = (Map.Entry<ContactType, String>) entry;
                     writer.writeUTF(entry_.getKey().toString());
                     writer.writeUTF(entry_.getValue().toString());
+                    // temporary line
+                    throw new IOException();
                 } catch (IOException e) {
-                    throw new StorageException("DataStream write error", e);
+                    throw new StorageException("DataStream writeUTF error", e);
                 }
             };
 
-            writeWithExeption(contacts.entrySet(), writer, action);
+            writeWithExeption(contacts.entrySet(), writer, action1);
 
             Map<SectionType, Section> sections = r.getSections();
             writer.writeInt(sections.size());
