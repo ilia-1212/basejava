@@ -19,22 +19,13 @@ public class DataStreamSerializer implements StreamSerializer  {
             writer.writeUTF(r.getFullName());
 
             Map<ContactType, String> contacts = r.getContacts();
-//            writer.writeInt(contacts.size());
-//            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-//                writer.writeUTF(entry.getKey().name());
-//                writer.writeUTF(entry.getValue());
-//            }
-//            contacts.entrySet().forEach(e->{writer.writeUTF(e.getKey().name());});
-            ConsumerWithExeption<Map.Entry<ContactType, String>> consumerEx = entry -> {
+            writeWithExeption(contacts.entrySet(), writer, entry -> {
                 writer.writeUTF(entry.getKey().name());
                 writer.writeUTF(entry.getValue());
-            };
-            writeWithExeption(contacts.entrySet(), writer, consumerEx);
+            });
 
             Map<SectionType, Section> sections = r.getSections();
-            writer.writeInt(sections.size());
-
-            for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
+            writeWithExeption(sections.entrySet(), writer, entry -> {
                 writer.writeUTF(entry.getKey().name());
 
                 switch (entry.getKey() ) {
@@ -44,29 +35,28 @@ public class DataStreamSerializer implements StreamSerializer  {
                     }
                     case ACHIEVEMENT, QUALIFICATIONS -> {
                         ListSection listSection = (ListSection) entry.getValue();
-                        writer.writeInt(listSection.getItems().size());
-                        for (String item: listSection.getItems()) {
+                        writeWithExeption(listSection.getItems(), writer, item -> {
                             writer.writeUTF(item);
-                        }
+                        });
+
                     }
                     case EXPERIENCE, EDUCATION -> {
                         OrganizationSection organizationSection = (OrganizationSection) entry.getValue();
-                        writer.writeInt(organizationSection.getOrganizations().size());
-                        for (Organization org: organizationSection.getOrganizations()) {
+
+                        writeWithExeption(organizationSection.getOrganizations(), writer, org -> {
                             writer.writeUTF(org.getHomePage().getName());
                             writeStrNan(org.getHomePage().getUrl(), writer);
 
-                            writer.writeInt(org.getPositions().size());
-                            for(Organization.Position position : org.getPositions()) {
-                                writer.writeUTF(position.getTitle());
-                                writeStrNan(position.getDescription(), writer);
-                                writer.writeUTF(position.getStartDate().toString()) ;
-                                writer.writeUTF(position.getEndDate().toString());
-                            }
-                        }
+                            writeWithExeption(org.getPositions(), writer, pos -> {
+                                writer.writeUTF(pos.getTitle());
+                                writeStrNan(pos.getDescription(), writer);
+                                writer.writeUTF(pos.getStartDate().toString()) ;
+                                writer.writeUTF(pos.getEndDate().toString());
+                            });
+                        });
                     }
                 }
-            }
+            });
         }
     }
 
