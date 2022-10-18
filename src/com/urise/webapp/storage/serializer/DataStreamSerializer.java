@@ -1,14 +1,15 @@
 package com.urise.webapp.storage.serializer;
 
 
-import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.util.ConsumerWithExeption;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class DataStreamSerializer implements StreamSerializer  {
     @Override
@@ -18,33 +19,17 @@ public class DataStreamSerializer implements StreamSerializer  {
             writer.writeUTF(r.getFullName());
 
             Map<ContactType, String> contacts = r.getContacts();
-            writer.writeInt(contacts.size());
-
-            Consumer<Map.Entry<ContactType, String>> action = (entry) -> {
-                try {
-                   writer.writeUTF(entry.getKey().toString());
-                   writer.writeUTF(entry.getValue());
-                   // temporary line
-                   throw new IOException();
-                } catch (IOException e) {
-                    throw new StorageException("DataStream writeUTF error", e);
-                }
+//            writer.writeInt(contacts.size());
+//            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+//                writer.writeUTF(entry.getKey().name());
+//                writer.writeUTF(entry.getValue());
+//            }
+//            contacts.entrySet().forEach(e->{writer.writeUTF(e.getKey().name());});
+            ConsumerWithExeption<Map.Entry<ContactType, String>> consumerEx = entry -> {
+                writer.writeUTF(entry.getKey().name());
+                writer.writeUTF(entry.getValue());
             };
-          // contacts.entrySet().forEach(action);
-
-            ConsumerWithExeption action1 = (entry) -> {
-                try {
-                    Map.Entry  entry_ = (Map.Entry<ContactType, String>) entry;
-                    writer.writeUTF(entry_.getKey().toString());
-                    writer.writeUTF(entry_.getValue().toString());
-                    // temporary line
-                    throw new IOException();
-                } catch (IOException e) {
-                    throw new StorageException("DataStream writeUTF error", e);
-                }
-            };
-
-            writeWithExeption(contacts.entrySet(), writer, action1);
+            writeWithExeption(contacts.entrySet(), writer, consumerEx);
 
             Map<SectionType, Section> sections = r.getSections();
             writer.writeInt(sections.size());
@@ -147,13 +132,10 @@ public class DataStreamSerializer implements StreamSerializer  {
         return str;
     }
 
-    private static void writeWithExeption(Collection collection, DataOutputStream writer, ConsumerWithExeption consumer) throws IOException {
-
-        //collection.forEach(consumer);
-        //Map.Entry entry = (Map.Entry<ContactType, String>) collection;
-        Objects.requireNonNull(consumer);
-        for (Object t : collection) {
-            consumer.accept(t);
+    private static <T> void writeWithExeption(Collection<T> collection, DataOutputStream dos, ConsumerWithExeption<T> consumer) throws IOException {
+        dos.writeInt(collection.size());
+        for (T t : collection) {
+            consumer.accept( t );
         }
     }
 }

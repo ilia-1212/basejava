@@ -1,10 +1,8 @@
 package com.urise.webapp.util;
 
-import java.util.function.Consumer;
+import java.io.IOException;
 
 @FunctionalInterface
-public interface ConsumerWithExeption extends Consumer {
-
-    @Override
-    void accept(Object o);
+public interface ConsumerWithExeption<T> {
+    void accept(T t) throws IOException;
 }
