@@ -26,9 +26,10 @@ public class DataStreamSerializer implements StreamSerializer  {
 
             Map<SectionType, Section> sections = r.getSections();
             writeWithExeption(sections.entrySet(), writer, entry -> {
-                writer.writeUTF(entry.getKey().name());
+                SectionType sectionKey = entry.getKey();
+                writer.writeUTF(sectionKey.name());
 
-                switch (entry.getKey() ) {
+                switch (sectionKey) {
                     case OBJECTIVE, PERSONAL -> {
                         TextSection textSection = (TextSection) entry.getValue();
                         writer.writeUTF(textSection.getContent());
