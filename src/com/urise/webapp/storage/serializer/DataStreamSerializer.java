@@ -3,6 +3,7 @@ package com.urise.webapp.storage.serializer;
 
 import com.urise.webapp.model.*;
 import com.urise.webapp.util.ConsumerWithExeption;
+import com.urise.webapp.util.VoidWithExeption;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -65,14 +66,12 @@ public class DataStreamSerializer implements StreamSerializer  {
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream reader = new DataInputStream(new ObjectInputStream(is))) {
             Resume resume = new Resume(reader.readUTF(), reader.readUTF());
-            int contactsSize = reader.readInt();
 
-            for (int i = 0; i < contactsSize; i++) {
+            readWithExeption(reader, () -> {
                 resume.addContact(ContactType.valueOf(reader.readUTF()), reader.readUTF());
-            }
+            });
 
-            int sectionsSize = reader.readInt();
-            for (int i = 0; i < sectionsSize; i++) {
+            readWithExeption(reader, () -> {
                 String sectionStr = reader.readUTF();
 
                 switch (SectionType.valueOf(sectionStr)) {
@@ -80,34 +79,35 @@ public class DataStreamSerializer implements StreamSerializer  {
                     case  ACHIEVEMENT, QUALIFICATIONS -> {
                         int itemsSize = reader.readInt();
                         List<String> items = new ArrayList<>();
-                        for(int j = 0;  j < itemsSize; j++) {
+                        for (int j = 0;  j < itemsSize; j++) {
                             items.add(reader.readUTF());
                         }
                         resume.addSection(SectionType.valueOf(sectionStr), new ListSection(items));
                     }
                     case  EXPERIENCE, EDUCATION -> {
-                        int orgsSize = reader.readInt();
                         List<Organization> organizations = new ArrayList<>();
-                        for(int j = 0;  j < orgsSize; j++) {
+
+                        readWithExeption(reader, () -> {
                             String homePageName = reader.readUTF();
                             String homePageURL = readStrNan(reader);
-                            int positionSize = reader.readInt();
+
                             List<Organization.Position> positions = new ArrayList<>();
 
-                            for(int k = 0; k < positionSize; k++) {
+                            readWithExeption(reader, () -> {
                                 String positionTitle = reader.readUTF();
                                 String positionDescription = readStrNan(reader);
                                 LocalDate positionStartDate = LocalDate.parse(reader.readUTF());
                                 LocalDate positionEndDate  = LocalDate.parse(reader.readUTF());
 
                                 positions.add(new Organization.Position(positionStartDate, positionEndDate, positionTitle, positionDescription));
-                            }
+                            });
+
                             organizations.add(new Organization( new Link(homePageName, homePageURL), positions));
-                        }
+                        });
                         resume.addSection(SectionType.valueOf(sectionStr), new OrganizationSection(organizations));
                     }
                 }
-            }
+            });
             return resume;
         }
     }
@@ -126,7 +126,14 @@ public class DataStreamSerializer implements StreamSerializer  {
     private static <T> void writeWithExeption(Collection<T> collection, DataOutputStream dos, ConsumerWithExeption<T> consumer) throws IOException {
         dos.writeInt(collection.size());
         for (T t : collection) {
-            consumer.accept( t );
+            consumer.accept(t);
+        }
+    }
+
+    private static void readWithExeption(DataInputStream dis, VoidWithExeption consumer) throws IOException {
+        int collectionSize = dis.readInt();
+        for (int i = 0; i < collectionSize; i++) {
+            consumer.accept();
         }
     }
 }
