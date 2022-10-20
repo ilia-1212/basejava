@@ -88,7 +88,7 @@ public class DataStreamSerializer implements StreamSerializer {
 //                            items.add(reader.readUTF());
 //                        }
 
-                        List<String> items11 = (List) getCollection( () -> {
+                        List items11 = (List) getCollection( () -> {
                             List<String> items1 = new ArrayList<>();
                             for (int j = 0; j < itemsSize; j++) {
                                 try {
