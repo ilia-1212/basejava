@@ -87,14 +87,14 @@ public class DataStreamSerializer implements StreamSerializer {
                                     String homePageURL = readStrNan(reader);
 
                                     return new Organization(new Link(homePageName, homePageURL),
-                                            readListWithException(reader, () -> {
-                                                String positionTitle = reader.readUTF();
-                                                String positionDescription = readStrNan(reader);
-                                                LocalDate positionStartDate = LocalDate.parse(reader.readUTF());
-                                                LocalDate positionEndDate = LocalDate.parse(reader.readUTF());
+                                        readListWithException(reader, () -> {
+                                            String positionTitle = reader.readUTF();
+                                            String positionDescription = readStrNan(reader);
+                                            LocalDate positionStartDate = LocalDate.parse(reader.readUTF());
+                                            LocalDate positionEndDate = LocalDate.parse(reader.readUTF());
 
-                                                return new Organization.Position(positionStartDate, positionEndDate, positionTitle, positionDescription);
-                                            })
+                                            return new Organization.Position(positionStartDate, positionEndDate, positionTitle, positionDescription);
+                                        })
                                     );
                                 })
                             )
