@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class DataStreamSerializer implements StreamSerializer  {
+public class DataStreamSerializer implements StreamSerializer {
     @Override
     public void doWrite(OutputStream os, Resume r) throws IOException {
         try (DataOutputStream writer = new DataOutputStream(new ObjectOutputStream(os))) {
@@ -20,39 +22,42 @@ public class DataStreamSerializer implements StreamSerializer  {
             writer.writeUTF(r.getFullName());
 
             Map<ContactType, String> contacts = r.getContacts();
-            writeWithExeption(contacts.entrySet(), writer, entry -> {
-                writer.writeUTF(entry.getKey().name());
-                writer.writeUTF(entry.getValue());
+            writeWithExeption(contacts.entrySet(), writer, contactEntry -> {
+                writer.writeUTF(contactEntry.getKey().name());
+                writer.writeUTF(contactEntry.getValue());
             });
 
             Map<SectionType, Section> sections = r.getSections();
-            writeWithExeption(sections.entrySet(), writer, entry -> {
-                SectionType sectionKey = entry.getKey();
+            writeWithExeption(sections.entrySet(), writer, sectionEntry -> {
+                SectionType sectionKey = sectionEntry.getKey();
                 writer.writeUTF(sectionKey.name());
 
                 switch (sectionKey) {
                     case OBJECTIVE, PERSONAL -> {
-                        TextSection textSection = (TextSection) entry.getValue();
+                        TextSection textSection = (TextSection) sectionEntry.getValue();
                         writer.writeUTF(textSection.getContent());
                     }
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        ListSection listSection = (ListSection) entry.getValue();
-                        writeWithExeption(listSection.getItems(), writer, item -> {
-                            writer.writeUTF(item);
+                        ListSection listSection = (ListSection) sectionEntry.getValue();
+
+                        writeWithExeption(getCollection(listSection::getItems), writer, item -> {
+                            writer.writeUTF((String) item);
                         });
 
                     }
                     case EXPERIENCE, EDUCATION -> {
-                        OrganizationSection organizationSection = (OrganizationSection) entry.getValue();
+                        OrganizationSection organizationSection = (OrganizationSection) sectionEntry.getValue();
 
-                        writeWithExeption(organizationSection.getOrganizations(), writer, org -> {
+                        writeWithExeption(getCollection(organizationSection::getOrganizations), writer, orgObj -> {
+                            Organization org = (Organization) orgObj;
                             writer.writeUTF(org.getHomePage().getName());
                             writeStrNan(org.getHomePage().getUrl(), writer);
 
-                            writeWithExeption(org.getPositions(), writer, pos -> {
+                            writeWithExeption(getCollection(org::getPositions), writer, posObj -> {
+                                Organization.Position pos = (Organization.Position) posObj;
                                 writer.writeUTF(pos.getTitle());
                                 writeStrNan(pos.getDescription(), writer);
-                                writer.writeUTF(pos.getStartDate().toString()) ;
+                                writer.writeUTF(pos.getStartDate().toString());
                                 writer.writeUTF(pos.getEndDate().toString());
                             });
                         });
@@ -75,16 +80,29 @@ public class DataStreamSerializer implements StreamSerializer  {
                 String sectionStr = reader.readUTF();
 
                 switch (SectionType.valueOf(sectionStr)) {
-                    case  PERSONAL,OBJECTIVE -> resume.addSection(SectionType.valueOf(sectionStr), new TextSection(reader.readUTF()));
-                    case  ACHIEVEMENT, QUALIFICATIONS -> {
+                    case PERSONAL, OBJECTIVE -> resume.addSection(SectionType.valueOf(sectionStr), new TextSection(reader.readUTF()));
+                    case ACHIEVEMENT, QUALIFICATIONS -> {
                         int itemsSize = reader.readInt();
-                        List<String> items = new ArrayList<>();
-                        for (int j = 0;  j < itemsSize; j++) {
-                            items.add(reader.readUTF());
-                        }
-                        resume.addSection(SectionType.valueOf(sectionStr), new ListSection(items));
+//                        List<String> items = new ArrayList<>();
+//                        for (int j = 0; j < itemsSize; j++) {
+//                            items.add(reader.readUTF());
+//                        }
+
+                        Collection<List<String>> items11 =  getCollection( () -> {
+                            List<String> items1 = new ArrayList<>();
+                            for (int j = 0; j < itemsSize; j++) {
+                                try {
+                                    items1.add(reader.readUTF());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            return items1;
+                        });
+
+                        resume.addSection(SectionType.valueOf(sectionStr), new ListSection(items11));
                     }
-                    case  EXPERIENCE, EDUCATION -> {
+                    case EXPERIENCE, EDUCATION -> {
                         List<Organization> organizations = new ArrayList<>();
 
                         readWithExeption(reader, () -> {
@@ -97,12 +115,12 @@ public class DataStreamSerializer implements StreamSerializer  {
                                 String positionTitle = reader.readUTF();
                                 String positionDescription = readStrNan(reader);
                                 LocalDate positionStartDate = LocalDate.parse(reader.readUTF());
-                                LocalDate positionEndDate  = LocalDate.parse(reader.readUTF());
+                                LocalDate positionEndDate = LocalDate.parse(reader.readUTF());
 
                                 positions.add(new Organization.Position(positionStartDate, positionEndDate, positionTitle, positionDescription));
                             });
 
-                            organizations.add(new Organization( new Link(homePageName, homePageURL), positions));
+                            organizations.add(new Organization(new Link(homePageName, homePageURL), positions));
                         });
                         resume.addSection(SectionType.valueOf(sectionStr), new OrganizationSection(organizations));
                     }
@@ -111,15 +129,16 @@ public class DataStreamSerializer implements StreamSerializer  {
             return resume;
         }
     }
-    private static void writeStrNan(String str, DataOutputStream dos ) throws IOException {
+
+    private static void writeStrNan(String str, DataOutputStream dos) throws IOException {
         dos.writeUTF((!(str == null)) ? str : "");
     }
 
-    private static String readStrNan(DataInputStream dis ) throws IOException {
+    private static String readStrNan(DataInputStream dis) throws IOException {
         String str = dis.readUTF();
         if (str.length() == 0) {
             str = null;
-       }
+        }
         return str;
     }
 
@@ -135,5 +154,14 @@ public class DataStreamSerializer implements StreamSerializer  {
         for (int i = 0; i < collectionSize; i++) {
             consumer.accept();
         }
+    }
+
+    private static <T> Collection<T> getCollection(Supplier sup) throws IOException {
+        return (Collection<T>) sup.get();
+    }
+
+    private static <T,R> Collection<R> setCollection(Function<T,R> sup) throws IOException {
+        T t = null;
+        return (Collection<R>) sup.apply(t);
     }
 }
