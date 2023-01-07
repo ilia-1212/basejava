@@ -81,23 +81,23 @@ public class DataStreamSerializer implements StreamSerializer {
                     case EXPERIENCE, EDUCATION -> {
 
                         resume.addSection(SectionType.valueOf(sectionStr),
-                            new OrganizationSection(
-                                readListWithException(reader, () -> {
-                                    String homePageName = reader.readUTF();
-                                    String homePageURL = readStrNan(reader);
-
-                                    return new Organization(new Link(homePageName, homePageURL),
+                                new OrganizationSection(
                                         readListWithException(reader, () -> {
-                                            String positionTitle = reader.readUTF();
-                                            String positionDescription = readStrNan(reader);
-                                            LocalDate positionStartDate = LocalDate.parse(reader.readUTF());
-                                            LocalDate positionEndDate = LocalDate.parse(reader.readUTF());
+                                            String homePageName = reader.readUTF();
+                                            String homePageURL = readStrNan(reader);
 
-                                            return new Organization.Position(positionStartDate, positionEndDate, positionTitle, positionDescription);
+                                            return new Organization(new Link(homePageName, homePageURL),
+                                                    readListWithException(reader, () -> {
+                                                        String positionTitle = reader.readUTF();
+                                                        String positionDescription = readStrNan(reader);
+                                                        LocalDate positionStartDate = LocalDate.parse(reader.readUTF());
+                                                        LocalDate positionEndDate = LocalDate.parse(reader.readUTF());
+
+                                                        return new Organization.Position(positionStartDate, positionEndDate, positionTitle, positionDescription);
+                                                    })
+                                            );
                                         })
-                                    );
-                                })
-                            )
+                                )
                         );
                     }
                 }
