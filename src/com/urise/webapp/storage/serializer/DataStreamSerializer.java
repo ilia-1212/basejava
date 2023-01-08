@@ -56,6 +56,7 @@ public class DataStreamSerializer implements StreamSerializer {
             });
         }
     }
+
     private void writeLocalDate(DataOutputStream dos, LocalDate ld) throws IOException {
         dos.writeInt(ld.getYear());
         dos.writeInt(ld.getMonth().getValue());
@@ -80,7 +81,7 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-    private Section readSection(DataInputStream dis, SectionType sectionType ) throws IOException {
+    private Section readSection(DataInputStream dis, SectionType sectionType) throws IOException {
 
         switch (sectionType) {
             case PERSONAL, OBJECTIVE -> {
@@ -94,14 +95,13 @@ public class DataStreamSerializer implements StreamSerializer {
                         readListWithException(dis, () -> new Organization(
                                 new Link(dis.readUTF(), readStrNan(dis)),
                                 readListWithException(dis, () -> new Organization.Position(
-                                            readLocalDate(dis), readLocalDate(dis), dis.readUTF(), readStrNan(dis)
-                                            )
+                                                readLocalDate(dis), readLocalDate(dis), dis.readUTF(), readStrNan(dis)
+                                        )
                                 ))
                         )
                 );
             }
-            default ->
-                throw new IllegalStateException();
+            default -> throw new IllegalStateException();
         }
     }
 
