@@ -12,7 +12,7 @@ public class MainStreamTest {
         System.out.println("числа после обработки на уникальность: " + Arrays.toString(IntStream.of(intValues).distinct().toArray()));
         System.out.println("минимальное число: " + minValue(intValues));
 
-        List<Integer> integerList = Arrays.stream(intValues).boxed().toList();
+        List<Integer> integerList = Arrays.stream(intValues).boxed().collect(Collectors.toList());
         System.out.println("числа после обработки на четное удаление: " + oddOrEven(integerList));
 
     }

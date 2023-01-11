@@ -31,15 +31,42 @@ public class DataStreamSerializer implements StreamSerializer {
                 Section section = entry.getValue();
                 dos.writeUTF(type.name());
 
-                switch (type) {
-                    case OBJECTIVE, PERSONAL -> {
-                        dos.writeUTF(((TextSection) section).getContent());
-                    }
-                    case ACHIEVEMENT, QUALIFICATIONS -> {
-                        writeWithException(((ListSection) section).getItems(), dos, item -> dos.writeUTF(item));
+//                switch (type) {
+//                    case OBJECTIVE, PERSONAL -> {
+//                        dos.writeUTF(((TextSection) section).getContent());
+//                    }
+//                    case ACHIEVEMENT, QUALIFICATIONS -> {
+//                        writeWithException(((ListSection) section).getItems(), dos, item -> dos.writeUTF(item));
+//
+//                    }
+//                    case EXPERIENCE, EDUCATION -> {
+//                        writeWithException(((OrganizationSection) section).getOrganizations(), dos, org -> {
+//                            dos.writeUTF(org.getHomePage().getName());
+//                            writeStrNan(org.getHomePage().getUrl(), dos);
+//
+//                            writeWithException(org.getPositions(), dos, position -> {
+//                                writeLocalDate(dos, position.getStartDate());
+//                                writeLocalDate(dos, position.getEndDate());
+//                                dos.writeUTF(position.getTitle());
+//                                writeStrNan(position.getDescription(), dos);
+//                            });
+//                        });
+//                    }
+//                }
 
+                switch (type) {
+                    case PERSONAL:
+                    case OBJECTIVE: {
+                        dos.writeUTF(((TextSection) section).getContent());
+                        break;
                     }
-                    case EXPERIENCE, EDUCATION -> {
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS: {
+                        writeWithException(((ListSection) section).getItems(), dos, item -> dos.writeUTF(item));
+                        break;
+                    }
+                    case EXPERIENCE:
+                    case EDUCATION: {
                         writeWithException(((OrganizationSection) section).getOrganizations(), dos, org -> {
                             dos.writeUTF(org.getHomePage().getName());
                             writeStrNan(org.getHomePage().getUrl(), dos);
@@ -51,8 +78,10 @@ public class DataStreamSerializer implements StreamSerializer {
                                 writeStrNan(position.getDescription(), dos);
                             });
                         });
+                        break;
                     }
                 }
+
             });
         }
     }
@@ -83,14 +112,38 @@ public class DataStreamSerializer implements StreamSerializer {
 
     private Section readSection(DataInputStream dis, SectionType sectionType) throws IOException {
 
+//        switch (sectionType) {
+//            case PERSONAL, OBJECTIVE -> {
+//                return new TextSection(dis.readUTF());
+//            }
+//            case ACHIEVEMENT, QUALIFICATIONS -> {
+//                return new ListSection(readListWithException(dis, () -> dis.readUTF()));
+//            }
+//            case EXPERIENCE, EDUCATION -> {
+//                return new OrganizationSection(
+//                        readListWithException(dis, () -> new Organization(
+//                                new Link(dis.readUTF(), readStrNan(dis)),
+//                                readListWithException(dis, () -> new Organization.Position(
+//                                                readLocalDate(dis), readLocalDate(dis), dis.readUTF(), readStrNan(dis)
+//                                        )
+//                                ))
+//                        )
+//                );
+//            }
+//            default -> throw new IllegalStateException();
+//        }
+
         switch (sectionType) {
-            case PERSONAL, OBJECTIVE -> {
+            case PERSONAL:
+            case OBJECTIVE: {
                 return new TextSection(dis.readUTF());
             }
-            case ACHIEVEMENT, QUALIFICATIONS -> {
+            case ACHIEVEMENT:
+            case QUALIFICATIONS: {
                 return new ListSection(readListWithException(dis, () -> dis.readUTF()));
             }
-            case EXPERIENCE, EDUCATION -> {
+            case EXPERIENCE:
+            case EDUCATION: {
                 return new OrganizationSection(
                         readListWithException(dis, () -> new Organization(
                                 new Link(dis.readUTF(), readStrNan(dis)),
@@ -101,7 +154,7 @@ public class DataStreamSerializer implements StreamSerializer {
                         )
                 );
             }
-            default -> throw new IllegalStateException();
+            default: throw new IllegalStateException();
         }
     }
 

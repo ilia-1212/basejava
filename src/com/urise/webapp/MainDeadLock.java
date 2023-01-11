@@ -13,7 +13,7 @@ public class MainDeadLock {
         for (int i = 0; i < 11; i++) {
             //transfer(a1, a2, 20);
             Thread thTrans = new Thread(
-                    () -> transfer(a1, a2, round(rnd.nextDouble(100d)))
+                    () -> transfer(a1, a2, round(rnd.nextDouble()*100))
             );
             thTrans.start();
         }
@@ -24,7 +24,7 @@ public class MainDeadLock {
         for (int i = 0; i < 2; i++) {
             //transfer(a2, a1, 500);
             Thread thTrans = new Thread(
-                    () -> transfer(a2, a1, round(rnd.nextDouble(500d)))
+                    () -> transfer(a2, a1, round(rnd.nextDouble()*500))
             );
             thTrans.start();
         }
