@@ -1,8 +1,4 @@
-package com.urise.webapp.storage;
-
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.StorageException;
-import com.urise.webapp.sql.ConnectionFactory;
+package com.urise.webapp.sql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,15 +11,16 @@ public class SqlHelper {
         this.connectionFactory = connectionFactory;
     }
 
-    public <T> T SqlExecute(String statement, SqlHelperExecute<T> sqlHelperExec) {
+    public void execute(String statement) {
+        execute(statement, PreparedStatement::execute);
+    }
+
+    public <T> T execute(String statement, SqlExecutor<T> sqlHelperExec) {
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement ps = connection.prepareStatement(statement)) {
             return (T) sqlHelperExec.execute(ps);
         } catch (SQLException e) {
-            if ("23505".equals(e.getSQLState())) {
-                throw new ExistStorageException("Unique Constraint Violation");
-            }
-            throw new StorageException(e);
+            throw ExceptionUtil.convertException(e);
         }
     }
 }

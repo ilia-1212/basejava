@@ -3,6 +3,7 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.sql.SqlHelper;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -21,19 +22,13 @@ public class SqlStorage implements Storage {
     @Override
     public void clear() {
         LOG.info("Clear");
-        sqlHelper.SqlExecute(
-                "DELETE FROM resume",
-                ps -> {
-                ps.execute();
-                return null;
-            }
-        );
+        sqlHelper.execute("DELETE FROM resume");
     }
 
     @Override
     public void update(Resume r) {
         LOG.info("Update " + r);
-        sqlHelper.SqlExecute(
+        sqlHelper.execute(
                 "UPDATE resume SET full_name=? WHERE uuid=?",
                 ps -> {
                     ps.setString(2, r.getUuid());
@@ -49,7 +44,7 @@ public class SqlStorage implements Storage {
     @Override
     public void save(Resume r) {
         LOG.info("Save " + r);
-        sqlHelper.SqlExecute(
+        sqlHelper.execute(
                 "INSERT INTO resume (uuid, full_name) VALUES (?,?)",
                 ps -> {
                     ps.setString(1, r.getUuid());
@@ -63,7 +58,7 @@ public class SqlStorage implements Storage {
     @Override
     public Resume get(String uuid) {
         LOG.info("Get " + uuid);
-        return sqlHelper.SqlExecute(
+        return sqlHelper.execute(
                 "SELECT r.* FROM resume r WHERE r.uuid = ?",
                 ps -> {
                     ps.setString(1, uuid);
@@ -79,7 +74,7 @@ public class SqlStorage implements Storage {
     @Override
     public void delete(String uuid) {
         LOG.info("Delete " + uuid);
-        sqlHelper.SqlExecute(
+        sqlHelper.execute(
                 "DELETE FROM resume WHERE uuid=?",
                 ps -> {
                     ps.setString(1, uuid);
@@ -94,13 +89,13 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         LOG.info("getAllSorted");
-        return sqlHelper.SqlExecute(
+        return sqlHelper.execute(
                 "SELECT r.* FROM resume r ORDER BY r.full_name, r.uuid",
                 ps -> {
                     ResultSet rs = ps.executeQuery();
                     List<Resume> resumeList = new ArrayList<>();
                     while (rs.next()) {
-                        resumeList.add(new Resume(rs.getString("uuid").trim(), rs.getString("full_name")));
+                        resumeList.add(new Resume(rs.getString("uuid"), rs.getString("full_name")));
                     }
                     return resumeList;
                 }
@@ -110,7 +105,7 @@ public class SqlStorage implements Storage {
     @Override
     public int size() {
         LOG.info("counting size");
-        return sqlHelper.SqlExecute(
+        return sqlHelper.execute(
                 "SELECT count(*) AS COUNT FROM resume r",
                 ps -> {
                     ResultSet rs = ps.executeQuery();

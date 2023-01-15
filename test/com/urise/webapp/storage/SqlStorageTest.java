@@ -1,7 +1,9 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.Config;
+
 public class SqlStorageTest extends AbstractStorageTest {
     public SqlStorageTest() {
-        super(new SqlStorage(STORAGE_DBURL,STORAGE_DBUSER,STORAGE_DBPASS));
+        super(Config.get().getStorage());
     }
 }
