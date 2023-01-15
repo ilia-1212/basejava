@@ -15,7 +15,7 @@ public class SqlHelper {
         this.connectionFactory = connectionFactory;
     }
 
-    public <T> T SqlExecute(SqlHelperExecute<T> sqlHelperExec, String statement) {
+    public <T> T SqlExecute(String statement, SqlHelperExecute<T> sqlHelperExec) {
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement ps = connection.prepareStatement(statement)) {
             return (T) sqlHelperExec.execute(ps);
