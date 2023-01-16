@@ -10,10 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = Config.get().getStorageDir();
@@ -39,7 +36,7 @@ public abstract class AbstractStorageTest {
         RESUME_1.addContact(ContactType.PHONE, "11111");
 
         RESUME_4.addContact(ContactType.MAIL, "mail1@ya.ru");
-        RESUME_4.addContact(ContactType.PHONE, "11111");
+        RESUME_4.addContact(ContactType.PHONE, "444");
 
 //        RESUME_1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
 //        RESUME_1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
@@ -114,7 +111,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSorted() throws Exception {
         List<Resume> list = storage.getAllSorted();
-        Collections.sort(list);
+       // Collections.sort(list);
         List<Resume> listSort = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
         assertSize(3);
         Collections.sort(listSort);
