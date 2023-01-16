@@ -3,6 +3,7 @@ package com.urise.webapp.storage;
 import com.urise.webapp.Config;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
+import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
 import org.junit.Assert;
 import org.junit.Before;
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,13 +30,17 @@ public abstract class AbstractStorageTest {
     protected static final Resume RESUME_4;
 
     static {
-        RESUME_3 = new Resume(UUID_3, "Илья Эирбасов");
-        RESUME_2 = new Resume(UUID_2, "Дима Боингов");
         RESUME_1 = new Resume(UUID_1, "Андрей Суперджетов");
+        RESUME_2 = new Resume(UUID_2, "Дима Боингов");
+        RESUME_3 = new Resume(UUID_3, "Илья Эирбасов");
         RESUME_4 = new Resume(UUID_4, "Илья Вертолетов");
 
-//        RESUME_1.addContact(ContactType.MAIL, "mail1@ya.ru");
-//        RESUME_1.addContact(ContactType.PHONE, "11111");
+        RESUME_1.addContact(ContactType.MAIL, "mail1@ya.ru");
+        RESUME_1.addContact(ContactType.PHONE, "11111");
+
+        RESUME_4.addContact(ContactType.MAIL, "mail1@ya.ru");
+        RESUME_4.addContact(ContactType.PHONE, "11111");
+
 //        RESUME_1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
 //        RESUME_1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
 //        RESUME_1.addSection(SectionType.ACHIEVEMENT, new ListSection("Achivment11", "Achivment12", "Achivment13"));
@@ -92,6 +98,10 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() throws Exception {
         Resume newResume = new Resume(UUID_1,"Старк");
+        newResume.addContact(ContactType.PHONE, "9-8-7");
+        newResume.addContact(ContactType.MOBILE, "9-8-7-6");
+        newResume.addContact(ContactType.MAIL, "ww@ww.ww");
+
         storage.update(newResume);
         Assert.assertTrue(newResume.equals(storage.get(UUID_1)));
     }
@@ -104,8 +114,11 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSorted() throws Exception {
         List<Resume> list = storage.getAllSorted();
+        Collections.sort(list);
+        List<Resume> listSort = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
         assertSize(3);
-        Assert.assertEquals(list, Arrays.asList(RESUME_1, RESUME_2, RESUME_3));
+        Collections.sort(listSort);
+        Assert.assertEquals(list, listSort);
     }
 
     @Test
