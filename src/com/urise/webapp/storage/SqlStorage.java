@@ -42,6 +42,12 @@ public class SqlStorage implements Storage {
         }
     }
 
+    private void appendResumeContacts(ResultSet rs, Resume r) throws SQLException {
+        if (rs.getString("resume_uuid") != null) {
+            r.addContact(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
+        }
+    }
+
     @Override
     public void clear() {
         LOG.info("Clear");
@@ -97,11 +103,7 @@ public class SqlStorage implements Storage {
                     Resume r = new Resume(uuid, rs.getString("full_name"));
 
                     do {
-                        if (rs.getString("resume_uuid") != null) {
-                            String value = rs.getString("value");
-                            ContactType type = ContactType.valueOf(rs.getString("type"));
-                            r.addContact(type, value);
-                        }
+                        appendResumeContacts(rs, r);
                     } while (rs.next());
 
                     return r;
@@ -141,10 +143,7 @@ public class SqlStorage implements Storage {
                             r = new Resume(rs.getString("uuid"), rs.getString("full_name"));
                             map.put(rs.getString("uuid"), r);
                         }
-
-                        if (rs.getString("resume_uuid") != null) {
-                            r.addContact(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
-                        }
+                        appendResumeContacts(rs, r);
                     }
                     return new ArrayList<>(map.values());
                 }
