@@ -5,7 +5,7 @@
          version="4.0">
     <servlet>
         <servlet-name>resumeServelet</servlet-name>
-        <servlet-class>com.urise.webapp.web.ResumeServelet</servlet-class>
+        <servlet-class>com.urise.webapp.web.ResumeServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>resumeServelet</servlet-name>
