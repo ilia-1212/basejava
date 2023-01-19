@@ -3,14 +3,16 @@ package com.urise.webapp.storage;
 import com.urise.webapp.Config;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = Config.get().getStorageDir();
@@ -35,13 +37,17 @@ public abstract class AbstractStorageTest {
         RESUME_1.addContact(ContactType.MAIL, "mail1@ya.ru");
         RESUME_1.addContact(ContactType.PHONE, "11111");
 
-        RESUME_4.addContact(ContactType.MAIL, "mail1@ya.ru");
+        RESUME_4.addContact(ContactType.MAIL, "mail4@ya.ru");
         RESUME_4.addContact(ContactType.PHONE, "444");
 
-//        RESUME_1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
-//        RESUME_1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
-//        RESUME_1.addSection(SectionType.ACHIEVEMENT, new ListSection("Achivment11", "Achivment12", "Achivment13"));
-//        RESUME_1.addSection(SectionType.QUALIFICATIONS, new ListSection("Java", "SQL", "JavaScript"));
+        RESUME_1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
+        RESUME_1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
+        RESUME_1.addSection(SectionType.ACHIEVEMENT, new ListSection("Achivment11", "Achivment12", "Achivment13"));
+        RESUME_1.addSection(SectionType.QUALIFICATIONS, new ListSection("Java", "SQL", "JavaScript"));
+
+        RESUME_2.addSection(SectionType.OBJECTIVE, new TextSection("Objective 2"));
+        RESUME_2.addSection(SectionType.PERSONAL, new TextSection("Personal data 2"));
+
 //        RESUME_1.addSection(SectionType.EXPERIENCE,
 //                new OrganizationSection(
 //                        new Organization("Organization11", "http://Organization11.ru",
@@ -98,7 +104,8 @@ public abstract class AbstractStorageTest {
         newResume.addContact(ContactType.PHONE, "9-8-7");
         newResume.addContact(ContactType.MOBILE, "9-8-7-6");
         newResume.addContact(ContactType.MAIL, "ww@ww.ww");
-
+        newResume.addSection(SectionType.PERSONAL, new TextSection("Джек Рассел"));
+        newResume.addSection(SectionType.ACHIEVEMENT, new ListSection(Arrays.asList("ем", "сплю", "гуляю")));
         storage.update(newResume);
         Assert.assertTrue(newResume.equals(storage.get(UUID_1)));
     }
@@ -111,7 +118,6 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSorted() throws Exception {
         List<Resume> list = storage.getAllSorted();
-       // Collections.sort(list);
         List<Resume> listSort = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
         assertSize(3);
         Collections.sort(listSort);
