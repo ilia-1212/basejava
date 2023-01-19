@@ -11,6 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class resumeServelet extends HttpServlet {
+    private  Storage storage = Config.get().getStorage();
+
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Where is your PG JDBC Driver?");
+            e.printStackTrace();
+        }
+    }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -21,25 +31,22 @@ public class resumeServelet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         //response.setHeader("Content-Type","text/html; charset=UTF-8");
+
         response.setContentType("text/html; charset=UTF-8");
         String uuid = request.getParameter("uuid");
         //response.getWriter().write(name == null ? "Hello from deep inside" : "Hello, " + name);
 
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Where is your MySQL JDBC Driver?");
-            e.printStackTrace();
-            return;
-        }
+        String htmlText = makeResumeTable(uuid);
+        response.getWriter().write(htmlText);
+    }
 
-        String htmlText;
-        htmlText = "<table style=\"width:100%\">" +
-                    "<tr>" +
-                    "<td>ID</td>" +
-                    "<td>Name</td>" +
-                    "</tr>";
-        Storage storage = Config.get().getStorage();
+    private String makeResumeTable(String uuid) {
+        String htmlText =
+                "<table style=\"width:100%\">" +
+                "<tr>" +
+                "<td>ID</td>" +
+                "<td>Name</td>" +
+                "</tr>";
 
         if (uuid == null) {
             for (Resume r : storage.getAllSorted()) {
@@ -53,6 +60,6 @@ public class resumeServelet extends HttpServlet {
         }
 
         htmlText +=  "</table>";
-        response.getWriter().write(htmlText);
+        return htmlText;
     }
 }
