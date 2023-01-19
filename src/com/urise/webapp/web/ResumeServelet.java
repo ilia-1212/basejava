@@ -10,17 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class resumeServelet extends HttpServlet {
-    private  Storage storage = Config.get().getStorage();
+public class ResumeServelet extends HttpServlet {
+    private Storage storage;
 
-    static {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Where is your PG JDBC Driver?");
-            e.printStackTrace();
-        }
+    @Override
+    public void init() throws ServletException {
+        this.storage = Config.get().getStorage();
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -38,6 +35,10 @@ public class resumeServelet extends HttpServlet {
 
         String htmlText = makePrettyTable(uuid);
         response.getWriter().write(htmlText);
+    }
+
+    public Storage initStorage() {
+        return Config.get().getStorage();
     }
 
     private String makePrettyTable(String uuid) {
