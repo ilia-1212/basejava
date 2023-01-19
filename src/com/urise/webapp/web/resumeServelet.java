@@ -36,30 +36,46 @@ public class resumeServelet extends HttpServlet {
         String uuid = request.getParameter("uuid");
         //response.getWriter().write(name == null ? "Hello from deep inside" : "Hello, " + name);
 
-        String htmlText = makeResumeTable(uuid);
+        String htmlText = makePrettyTable(uuid);
         response.getWriter().write(htmlText);
     }
 
-    private String makeResumeTable(String uuid) {
+    private String makePrettyTable(String uuid) {
         String htmlText =
-                "<table style=\"width:100%\">" +
-                "<tr>" +
-                "<td>ID</td>" +
-                "<td>Name</td>" +
-                "</tr>";
+            "<html>\n" +
+                    "<head>\n" +
+                    "    <meta charset=\"UTF-8\">\n" +
+                    "    <link rel=\"stylesheet\" href=\"css/style.css\">\n" +
+                    "    <title>Резюме</title>\n" +
+                    "</head>\n" +
+                    "<body>\n" +
+                    "\n" +
+                    "<h2>Список резюме</h2>\n" +
+                    "\n" +
+                    "<table>\n" +
+                    "  <tr>\n" +
+                    "    <th> UUID </th>\n" +
+                    "    <th> ФИО </th>\n" +
+                    "  </tr>\n";
 
-        if (uuid == null) {
-            for (Resume r : storage.getAllSorted()) {
-                htmlText += "<tr>" + "<td>" + r.getUuid()  + "</td>";
-                htmlText += "<td>" + r.getFullName()  + "</td>" + "</tr>";
-            }
-        } else {
-            Resume r = storage.get(uuid);
-            htmlText += "<tr>" + "<td>" + r.getUuid()  + "</td>";
-            htmlText += "<td>" + r.getFullName()  + "</td>" + "</tr>";
-        }
+                    if (uuid == null) {
+                        for (Resume r : storage.getAllSorted()) {
 
-        htmlText +=  "</table>";
+                            htmlText += "<tr>\n" + "<td>" + r.getUuid()  + "</td>";
+                            htmlText += "<td>" + r.getFullName()  + "</td>" + "</tr>";
+                        }
+                    } else {
+                        Resume r = storage.get(uuid);
+                        htmlText += "<tr>" + "<td>" + r.getUuid()  + "</td>";
+                        htmlText += "<td>" + r.getFullName()  + "</td>" + "</tr>";
+                    }
+
+                    htmlText +=
+                    "\n" +
+                    "</table>\n" +
+                    "\n" +
+                    "</body>\n" +
+                    "</html>";
         return htmlText;
     }
 }
