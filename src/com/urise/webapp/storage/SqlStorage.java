@@ -15,13 +15,13 @@ public class SqlStorage implements Storage {
     private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
-        this.sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
             System.out.println("Where is your PG JDBC Driver?");
             e.printStackTrace();
         }
+        this.sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
     }
 
     @Override

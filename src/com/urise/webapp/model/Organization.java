@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +65,15 @@ public class Organization implements Serializable {
     @Override
     public String toString() {
         return "Organization(" + homePage + "," + positions + ')';
+    }
+
+    public String toHtml() {
+        String result = " ";
+        for (Organization.Position pos : positions) {
+            result += "<br>" + pos.toHtml();
+        }
+        return homePage.toHtml()  + result;
+
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -131,6 +141,13 @@ public class Organization implements Serializable {
         @Override
         public String toString() {
             return "Position(" + startDate + ',' + endDate + ',' + title + ',' + description + ')';
+        }
+
+        public String toHtml() {
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("LLLL yyyy");
+
+            return startDate.format(fmt) + " - " + (endDate.equals(LocalDate.of(3000, 1, 1)) ?  "Сейчас" : endDate.format(fmt)) +
+                    "<br>" + title + "<br>" + description ;
         }
     }
 }

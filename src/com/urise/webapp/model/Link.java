@@ -53,4 +53,8 @@ public class Link implements Serializable {
         result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;
     }
+
+    public String toHtml() {
+        return "<br><a href= " + url + "> "+ name + "</a>";
+    }
 }
