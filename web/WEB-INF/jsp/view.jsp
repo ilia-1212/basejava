@@ -60,7 +60,7 @@
 
                         <c:forEach var="org" items="<%=orgSection.getOrganizations()%>">
                             <jsp:useBean id="org" class="com.urise.webapp.model.Organization"/>
-                            <%=org.toHtml()%> <br>
+
                         </c:forEach>
 
                     </c:when>

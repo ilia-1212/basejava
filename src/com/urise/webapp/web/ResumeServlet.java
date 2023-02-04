@@ -3,6 +3,7 @@ package com.urise.webapp.web;
 import com.urise.webapp.Config;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
+import com.urise.webapp.util.WebUtil;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -32,9 +35,10 @@ public class ResumeServlet extends HttpServlet {
         String fullName = request.getParameter("fullName");
         Resume r = storage.get(uuid);
         r.setFullName(fullName);
+
         for(ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
+            if (!WebUtil.isEmpty(value)) {
                 r.addContact(type, value);
             } else {
                 r.getContacts().remove(type);
@@ -42,29 +46,31 @@ public class ResumeServlet extends HttpServlet {
         }
 
         for(SectionType type : SectionType.values()) {
-            Section value = null;
-            switch (type) {
-                case PERSONAL :
-                case OBJECTIVE : {
-                    value = new TextSection(request.getParameter(type.name()));
-                    break;
-                }
-                case ACHIEVEMENT:
-                case QUALIFICATIONS: {
-                    value = new ListSection(request.getParameterValues(type.name()));
-                    break;
-                }
-                case EXPERIENCE:
-                case EDUCATION: {
+            String value = request.getParameter(type.name());
+            String[] values = request.getParameterValues(type.name());
 
-                    break;
-                }
-            }
-
-            if (value != null ) {
-                r.addSection(type, value);
-            } else {
+            if (WebUtil.isEmpty(value) && values.length < 2) {
                 r.getSections().remove(type);
+            } else {
+
+                switch (type) {
+                    case PERSONAL:
+                    case OBJECTIVE: {
+
+                        r.addSection(type, new TextSection(value));
+                        break;
+                    }
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS: {
+                        r.addSection(type, new ListSection(value.split("\n")));
+                        break;
+                    }
+                    case EXPERIENCE:
+                    case EDUCATION: {
+
+                        break;
+                    }
+                }
             }
         }
         storage.update(r);
@@ -88,8 +94,42 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume");
                 return;
             case "view" :
+                r = storage.get(uuid);
+                break;
             case "edit" :
                 r = storage.get(uuid);
+                for (SectionType type : SectionType.values()) {
+                    if (type == SectionType.OBJECTIVE || type == SectionType.PERSONAL) {
+                        TextSection textSection = (TextSection) r.getSection(type);
+                        if (textSection == null) {
+                            r.addSection(type, TextSection.EMPTY);
+                        }
+                    }
+                    else if (type == SectionType.ACHIEVEMENT || type == SectionType.QUALIFICATIONS) {
+                        ListSection listSection = (ListSection) r.getSection(type);
+                        if (listSection == null) {
+                            r.addSection(type, ListSection.EMPTY);
+                        }
+                    }
+                    else if (type == SectionType.EXPERIENCE || type == SectionType.EDUCATION) {
+                        OrganizationSection orgSection = (OrganizationSection) r.getSection(type);
+                        List<Organization> emptyOrgSection = new ArrayList<>();
+                        emptyOrgSection.add(Organization.EMPTY);
+                        if (orgSection != null) {
+                            for (Organization organization : orgSection.getOrganizations()) {
+                                List<Organization.Position> emptyPosition = new ArrayList<>();
+
+                                emptyPosition.add(Organization.Position.EMPTY);
+                                emptyPosition.addAll(organization.getPositions());
+
+                                emptyOrgSection.add(new Organization(organization.getHomePage(), emptyPosition));
+                            }
+
+                        }
+                        r.addSection(type, new OrganizationSection(emptyOrgSection));
+                    }
+
+                }
                 break;
             default : throw new IllegalArgumentException("Action " + action + " is illegal");
         }

@@ -1,8 +1,12 @@
 <%@ page import="com.urise.webapp.model.ContactType" %>
 <%@ page import="com.urise.webapp.model.SectionType" %>
+<%@ page import="com.urise.webapp.model.ListSection" %>
+<%@ page import="com.urise.webapp.model.TextSection" %>
+<%@ page import="com.urise.webapp.util.DateUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -12,16 +16,16 @@
 </head>
 <body>
 <jsp:include page="fragments/header.jsp"/>
+
 <section>
     <form  name=frmResume method="post" action="resume" enctype="application/x-www-form-urlencoded">
         <input type="hidden" name="uuid" value="${resume.uuid}">
         <dl>
             <dt>Имя: </dt>
-            <dd>
-                <input type="text" name="fullName" size="50" value="${fn:trim(resume.fullName)}">
+            <dd><input type="text" name="fullName" size="50" value="${resume.fullName}">
         </dl>
-        <h3>Контакты:</h3>
         <hr>
+        <h3>Контакты:</h3>
         <p>
             <c:forEach var="type" items = "<%=ContactType.values()%>">
                 <dl>
@@ -30,46 +34,60 @@
                 </dl>
             </c:forEach>
         </p>
-        <h3>Секции:</h3>
+
         <hr>
+        <h3>Секции:</h3>
         <p>
         <c:forEach var="sectionType" items="<%=SectionType.values()%>">
             <h4>${sectionType.title} </h4>
-            <c:set var="sectionKind" value="${resume.getSection(sectionType)}"/>
+<%--                <c:set var="sectionAll" value="${resume.getSection(sectionType)}"/>--%>
+<%--                <jsp:useBean id="sectionAll" type="com.urise.webapp.model.Section" />--%>
+
             <c:choose>
-                <c:when test="${sectionType eq 'PERSONAL' || sectionType eq 'OBJECTIVE'}">
-                    <c:set var="textSection" value="${sectionKind}"/>
-                    <jsp:useBean id="textSection" class="com.urise.webapp.model.TextSection"/>
-                    <p>
-                    <br>
-                    <input type="text" name="${sectionType}" size=130  value="${textSection.content}">
-                    <br>
+                <c:when test="${sectionType == 'PERSONAL' || sectionType == 'OBJECTIVE'}">
+                    <c:if test="${resume.getSection(sectionType) != null}">
+                        <c:set var="sectionText" value="${resume.getSection(sectionType) }"/>
+                        <jsp:useBean id="sectionText" type="com.urise.webapp.model.TextSection"/>
+                        <textarea name="${sectionType}" rows="5" cols="110"><%=sectionText.getContent()%></textarea>
+                    </c:if>
                 </c:when>
 
-                <c:when test="${sectionType eq 'ACHIEVEMENT' || sectionType eq 'QUALIFICATIONS'}">
-                    <c:set var="listSection" value="${sectionKind}"/>
-                    <jsp:useBean id="listSection" class="com.urise.webapp.model.ListSection"/>
-                    <ul>
-                        <c:forEach var="item" items="<%=listSection.getItems()%>">
-                            <li>
-                                <textarea name="${sectionType}" rows="10" cols="110"> ${item} </textarea>
-                            </li>
-                        </c:forEach>
-                    </ul>
+                <c:when test="${sectionType == 'ACHIEVEMENT' || sectionType == 'QUALIFICATIONS'}">
+<%--            ${fn:join( sectionKind.getItems,'\\n' )--%>
+                    <c:if test="${resume.getSection(sectionType) != null}">
+                        <c:set var="sectionList" value="${resume.getSection(sectionType) }"/>
+                        <jsp:useBean id="sectionList" type="com.urise.webapp.model.ListSection"/>
+                        <textarea name="${sectionType}" rows="10" cols="110"><%= String.join("\n", sectionList.getItems()) %></textarea>
+                    </c:if>
                 </c:when>
+
                 <c:when test="${sectionType eq 'EXPERIENCE' || sectionType eq 'EDUCATION'}">
-                    <c:set var="orgSection" value="${sectionKind}"/>
-                    <jsp:useBean id="orgSection" class="com.urise.webapp.model.OrganizationSection"/>
+                    <c:if test="${resume.getSection(sectionType) != null}">
+                        <c:set var="sectionOrg" value="${resume.getSection(sectionType) }"/>
+                        <jsp:useBean id="sectionOrg" type="com.urise.webapp.model.OrganizationSection"/>
+                        <c:forEach var="org" items="<%= sectionOrg.getOrganizations() %>" varStatus="idxOrg">
+                            <input type="text" name="${sectionType.name().concat("HomePageNameOrg").concat(idxOrg.index)}" value="${org.homePage.name}" size="50">
+                            <input type="text" name="${sectionType.name().concat("HomePageURL").concat(idxOrg.index)}" value="${org.homePage.url}" size="50">
 
-                    <c:forEach var="org" items="<%=orgSection.getOrganizations()%>">
-                        <jsp:useBean id="org" class="com.urise.webapp.model.Organization"/>
-<%--                        <%=org.toHtml()%> <br>--%>
-                    </c:forEach>
+                            <c:forEach var="position" items="${org.positions}">
+                                <p>
+                                <input type="text" name="${sectionType.name().concat("PositionTitle").concat(idxOrg.index)}" value="${position.title}" size="50">
+                                <input type="text" name="${sectionType.name().concat("PositionDescription").concat(idxOrg.index)}" value="${position.description}" size="50">
+
+                                 <jsp:useBean id="position" type="com.urise.webapp.model.Organization.Position"/>
+                                <input type="text" name="${sectionType.name().concat("PositionStartDate").concat(idxOrg.index)}" value="<%= DateUtil.toHtml(position.getStartDate())%>" size=" 50">
+                                <input type="text" name="${sectionType.name().concat("PositionEndDate").concat(idxOrg.index)}" value="<%= DateUtil.toHtml(position.getEndDate())%>" size="50">
+                            </c:forEach>
+                            <br>
+                        </c:forEach>
+
+                    </c:if>
+
                 </c:when>
             </c:choose>
         </c:forEach>
         <hr>
-        <button type="submit" id="btnSave" name="submit">Сохранить</button>
+        <button type="submit" id="btnSave" name="submit" >Сохранить</button>
         <button type="submit" name="cancel" onclick="window.history.back()">Отменить</button>
     </form>
 </section>

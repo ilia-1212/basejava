@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +20,7 @@ import static com.urise.webapp.util.DateUtil.of;
 public class Organization implements Serializable {
     //@Serial
     private static final long serialVersionUID = 1L;
+    public static final Organization EMPTY = new Organization("", "", Position.EMPTY);
 
     private Link homePage;
     private List<Position> positions = new ArrayList<>();
@@ -67,15 +67,6 @@ public class Organization implements Serializable {
         return "Organization(" + homePage + "," + positions + ')';
     }
 
-    public String toHtml() {
-        String result = " ";
-        for (Organization.Position pos : positions) {
-            result += "<br>" + pos.toHtml();
-        }
-        return homePage.toHtml()  + result;
-
-    }
-
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Position implements Serializable {
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
@@ -84,6 +75,8 @@ public class Organization implements Serializable {
         private LocalDate endDate;
         private String title;
         private String description;
+        public static final Position EMPTY = new Position();
+
 
         public Position() {
         }
@@ -141,13 +134,6 @@ public class Organization implements Serializable {
         @Override
         public String toString() {
             return "Position(" + startDate + ',' + endDate + ',' + title + ',' + description + ')';
-        }
-
-        public String toHtml() {
-            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("LLLL yyyy");
-
-            return startDate.format(fmt) + " - " + (endDate.equals(LocalDate.of(3000, 1, 1)) ?  "Сейчас" : endDate.format(fmt)) +
-                    "<br>" + title + "<br>" + description ;
         }
     }
 }
