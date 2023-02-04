@@ -2,6 +2,7 @@
 <%@ page import="com.urise.webapp.model.SectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -16,7 +17,8 @@
         <input type="hidden" name="uuid" value="${resume.uuid}">
         <dl>
             <dt>Имя: </dt>
-            <dd><input type="text" name="fullName" size="50" value="${resume.fullName}">
+            <dd>
+                <input type="text" name="fullName" size="50" value="${fn:trim(resume.fullName)}">
         </dl>
         <h3>Контакты:</h3>
         <hr>
