@@ -25,7 +25,7 @@ public class ResumeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        Boolean isSubmit = (request.getParameter("submit") != null ? true : false);
+        Boolean isSubmit = (request.getParameter("green-submit-button") != null ? true : false);
         if (!isSubmit) {
             response.sendRedirect("resume");
             return;

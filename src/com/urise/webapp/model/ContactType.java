@@ -64,6 +64,6 @@ public enum ContactType {
     }
 
     public static String toLink(String href, String title) {
-        return "<a href='" + href + "'>" + title + "</a>";
+        return "<a class=\"contact-link\" href='" + href + "'>" + title + "</a>";
     }
 }
