@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -102,8 +103,15 @@ public class ResumeServlet extends HttpServlet {
             case "view" :
                 r = storage.get(uuid);
                 break;
+            case "add" :
             case "edit" :
-                r = storage.get(uuid);
+                if (uuid == null) {
+                 uuid = UUID.randomUUID().toString();
+                 r = new Resume(uuid, "");
+                 storage.save(r);
+                } else {
+                    r = storage.get(uuid);
+                }
                 for (SectionType type : SectionType.values()) {
                     if (type == SectionType.OBJECTIVE || type == SectionType.PERSONAL) {
                         TextSection textSection = (TextSection) r.getSection(type);

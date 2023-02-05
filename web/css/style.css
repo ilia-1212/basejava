@@ -83,3 +83,28 @@ a[href*="github."] {
     padding-left: 20px !important;
     background: url(../img/gh.png) no-repeat center left;
 }
+
+.add-resume {
+    height: 100px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.add-resume-title {
+    font-family: Roboto, serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 15px;
+
+    width: 70px;
+    margin-left: 13px;
+    display: block;
+
+    color: var(--add-resume-text-color);
+}
+
+.resumes-list {
+    width: 100%;
+}
