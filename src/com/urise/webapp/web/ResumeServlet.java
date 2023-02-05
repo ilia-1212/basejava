@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.UUID;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -25,18 +24,26 @@ public class ResumeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        Boolean isSubmit = (request.getParameter("green-submit-button") != null);
+        Boolean isSubmit = (request.getParameter("submit") != null);
         if (!isSubmit) {
             response.sendRedirect("resume");
             return;
         }
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r = storage.get(uuid);
-        if (!WebUtil.isEmpty(fullName)) {
-            r.setFullName(fullName.trim());
-        }
+        Resume r;
+        if (WebUtil.isEmpty(fullName)) {
+            response.sendRedirect("resume");
+            return;
+        } else if (WebUtil.isEmpty(uuid)) {
+             r = new Resume(fullName);
+        } else {
+             r = storage.get(uuid);
 
+            if (!WebUtil.isEmpty(fullName)) {
+                r.setFullName(fullName.trim());
+            }
+        }
 
         for(ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
@@ -80,7 +87,12 @@ public class ResumeServlet extends HttpServlet {
                 }
             }
         }
-        storage.update(r);
+        if ((WebUtil.isEmpty(uuid))) {
+            storage.save(r);
+        } else {
+            storage.update(r);
+        }
+
         response.sendRedirect("resume");
     }
 
@@ -104,33 +116,12 @@ public class ResumeServlet extends HttpServlet {
                 r = storage.get(uuid);
                 break;
             case "add" :
+                r = new Resume();
+                setEmptyResume(r);
+                break;
             case "edit" :
-                if (uuid == null) {
-                 uuid = UUID.randomUUID().toString();
-                 r = new Resume(uuid, "");
-                 storage.save(r);
-                } else {
-                    r = storage.get(uuid);
-                }
-                for (SectionType type : SectionType.values()) {
-                    if (type == SectionType.OBJECTIVE || type == SectionType.PERSONAL) {
-                        TextSection textSection = (TextSection) r.getSection(type);
-                        if (textSection == null) {
-                            r.addSection(type, TextSection.EMPTY);
-                        }
-                    }
-                    else if (type == SectionType.ACHIEVEMENT || type == SectionType.QUALIFICATIONS) {
-                        ListSection listSection = (ListSection) r.getSection(type);
-                        if (listSection == null) {
-                            r.addSection(type, ListSection.EMPTY);
-                        }
-                    }
-                    else if (type == SectionType.EXPERIENCE || type == SectionType.EDUCATION) {
-                        OrganizationSection orgSection = (OrganizationSection) r.getSection(type);
-                       //
-                    }
-
-                }
+                r = storage.get(uuid);
+                setEmptyResume(r);
                 break;
             default : throw new IllegalArgumentException("Action " + action + " is illegal");
         }
@@ -139,6 +130,28 @@ public class ResumeServlet extends HttpServlet {
                 ("view".equals(action) ? "WEB-INF/jsp/view.jsp" : "WEB-INF/jsp/edit.jsp")
         ).forward(request, response);
 
+    }
+
+    private void setEmptyResume(Resume r) {
+        for (SectionType type : SectionType.values()) {
+            if (type == SectionType.OBJECTIVE || type == SectionType.PERSONAL) {
+                TextSection textSection = (TextSection) r.getSection(type);
+                if (textSection == null) {
+                    r.addSection(type, TextSection.EMPTY);
+                }
+            }
+            else if (type == SectionType.ACHIEVEMENT || type == SectionType.QUALIFICATIONS) {
+                ListSection listSection = (ListSection) r.getSection(type);
+                if (listSection == null) {
+                    r.addSection(type, ListSection.EMPTY);
+                }
+            }
+            else if (type == SectionType.EXPERIENCE || type == SectionType.EDUCATION) {
+                OrganizationSection orgSection = (OrganizationSection) r.getSection(type);
+               //
+            }
+
+        }
     }
 
     public Storage initStorage() {

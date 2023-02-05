@@ -95,7 +95,9 @@
                                         <div class="position">${position.title}</div>
                                     </div>
                                     <div class="description">${position.description}</div>
+                                    <p>
                                 </c:forEach>
+                                <p>
                             </c:forEach>
                         </div>
                     </c:if>

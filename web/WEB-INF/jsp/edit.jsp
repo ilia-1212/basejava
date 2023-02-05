@@ -68,8 +68,8 @@
                 </c:forEach>
 
                 <div class="button-section">
-                    <button type="submit" id="btnSave" name="green-submit-button" >Сохранить</button>
-                    <button type="button" name="red-cancel-button" onclick="window.history.back()">Отменить</button>
+                    <button type="submit" id="btnSave" name="submit" class="green-submit-button" >Сохранить</button>
+                    <button type="button" class="red-cancel-button" onclick="window.history.back()">Отменить</button>
                 </div>
             </div>
         </div>

@@ -11,6 +11,6 @@ public class WebUtil {
     }
 
     public static String PeriodDatesPosition(Organization.Position position) {
-            return DateUtil.toHtml(position.getStartDate()) + " --- " + DateUtil.toHtml(position.getEndDate());
+            return DateUtil.toHtml(position.getStartDate()) + " - " + DateUtil.toHtml(position.getEndDate());
     }
 }
