@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -45,11 +43,16 @@ public class ResumeServlet extends HttpServlet {
             }
         }
 
-        for(SectionType type : SectionType.values()) {
+//        for(SectionType type : SectionType.values()) {
+          for(SectionType type : new SectionType[]{
+                  SectionType.PERSONAL,
+                  SectionType.OBJECTIVE,
+                  SectionType.ACHIEVEMENT,
+                  SectionType.QUALIFICATIONS }) {
             String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
 
-            if (WebUtil.isEmpty(value) && values.length < 2) {
+            if (WebUtil.isEmpty(value) && values.length < 1) {
                 r.getSections().remove(type);
             } else {
 
@@ -113,20 +116,7 @@ public class ResumeServlet extends HttpServlet {
                     }
                     else if (type == SectionType.EXPERIENCE || type == SectionType.EDUCATION) {
                         OrganizationSection orgSection = (OrganizationSection) r.getSection(type);
-                        List<Organization> emptyOrgSection = new ArrayList<>();
-                        emptyOrgSection.add(Organization.EMPTY);
-                        if (orgSection != null) {
-                            for (Organization organization : orgSection.getOrganizations()) {
-                                List<Organization.Position> emptyPosition = new ArrayList<>();
-
-                                emptyPosition.add(Organization.Position.EMPTY);
-                                emptyPosition.addAll(organization.getPositions());
-
-                                emptyOrgSection.add(new Organization(organization.getHomePage(), emptyPosition));
-                            }
-
-                        }
-                        r.addSection(type, new OrganizationSection(emptyOrgSection));
+                       //
                     }
 
                 }

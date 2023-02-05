@@ -65,22 +65,8 @@
                     <c:if test="${resume.getSection(sectionType) != null}">
                         <c:set var="sectionOrg" value="${resume.getSection(sectionType) }"/>
                         <jsp:useBean id="sectionOrg" type="com.urise.webapp.model.OrganizationSection"/>
-                        <c:forEach var="org" items="<%= sectionOrg.getOrganizations() %>" varStatus="idxOrg">
-                            <input type="text" name="${sectionType.name().concat("HomePageNameOrg").concat(idxOrg.index)}" value="${org.homePage.name}" size="50">
-                            <input type="text" name="${sectionType.name().concat("HomePageURL").concat(idxOrg.index)}" value="${org.homePage.url}" size="50">
-
-                            <c:forEach var="position" items="${org.positions}">
-                                <p>
-                                <input type="text" name="${sectionType.name().concat("PositionTitle").concat(idxOrg.index)}" value="${position.title}" size="50">
-                                <input type="text" name="${sectionType.name().concat("PositionDescription").concat(idxOrg.index)}" value="${position.description}" size="50">
-
-                                 <jsp:useBean id="position" type="com.urise.webapp.model.Organization.Position"/>
-                                <input type="text" name="${sectionType.name().concat("PositionStartDate").concat(idxOrg.index)}" value="<%= DateUtil.toHtml(position.getStartDate())%>" size=" 50">
-                                <input type="text" name="${sectionType.name().concat("PositionEndDate").concat(idxOrg.index)}" value="<%= DateUtil.toHtml(position.getEndDate())%>" size="50">
-                            </c:forEach>
-                            <br>
-                        </c:forEach>
-
+                        <dl>
+                        </dl>
                     </c:if>
 
                 </c:when>
