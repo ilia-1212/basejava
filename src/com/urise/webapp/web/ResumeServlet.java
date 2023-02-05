@@ -32,12 +32,15 @@ public class ResumeServlet extends HttpServlet {
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
         Resume r = storage.get(uuid);
-        r.setFullName(fullName);
+        if (!WebUtil.isEmpty(fullName)) {
+            r.setFullName(fullName.trim());
+        }
+
 
         for(ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
             if (!WebUtil.isEmpty(value)) {
-                r.addContact(type, value);
+                r.addContact(type, value.trim());
             } else {
                 r.getContacts().remove(type);
             }
@@ -52,7 +55,7 @@ public class ResumeServlet extends HttpServlet {
             String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
 
-            if (WebUtil.isEmpty(value) && values.length < 1) {
+            if (WebUtil.isEmpty(value) && values.length < 2) {
                 r.getSections().remove(type);
             } else {
 
@@ -60,12 +63,12 @@ public class ResumeServlet extends HttpServlet {
                     case PERSONAL:
                     case OBJECTIVE: {
 
-                        r.addSection(type, new TextSection(value));
+                        r.addSection(type, new TextSection(value.trim()));
                         break;
                     }
                     case ACHIEVEMENT:
                     case QUALIFICATIONS: {
-                        r.addSection(type, new ListSection(value.split("\n")));
+                        r.addSection(type, new ListSection(value.trim().split("\n")));
                         break;
                     }
                     case EXPERIENCE:
