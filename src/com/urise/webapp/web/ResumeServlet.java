@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -70,7 +72,6 @@ public class ResumeServlet extends HttpServlet {
                 switch (type) {
                     case PERSONAL:
                     case OBJECTIVE: {
-
                         r.addSection(type, new TextSection(value.trim()));
                         break;
                     }
@@ -82,6 +83,7 @@ public class ResumeServlet extends HttpServlet {
                     case EXPERIENCE:
                     case EDUCATION: {
 
+                        r.addSection(type, new OrganizationSection());
                         break;
                     }
                 }
@@ -148,9 +150,20 @@ public class ResumeServlet extends HttpServlet {
             }
             else if (type == SectionType.EXPERIENCE || type == SectionType.EDUCATION) {
                 OrganizationSection orgSection = (OrganizationSection) r.getSection(type);
-               //
-            }
+                List<Organization> emptyOrgSection = new ArrayList<>();
+                emptyOrgSection.add(Organization.EMPTY);
+                if (orgSection != null) {
+                    for (Organization org : orgSection.getOrganizations()) {
+                        List<Organization.Position> emptyPosSection = new ArrayList<>();
 
+                        emptyPosSection.add(Organization.Position.EMPTY);
+                        emptyPosSection.addAll(org.getPositions());
+
+                        emptyOrgSection.add(new Organization(org.getHomePage(), emptyPosSection));
+                    }
+                }
+                r.addSection(type, new OrganizationSection(emptyOrgSection));
+            }
         }
     }
 

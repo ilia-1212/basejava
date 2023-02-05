@@ -142,32 +142,18 @@ button {
     width: 100%;
     margin-right: 10px;
 
-    color: var(--button-text-color);
+    /*color: var(--button-text-color);*/
 
     border: 2px solid var(--cancel-button-color);
-    background: var(--cancel-button-color);
-}
-
-.red-cancel-button:hover {
-    color: var(--cancel-button-color);
-    opacity: 0.8;
-    box-shadow: 0 0 10px var(--cancel-button-color);
-    background: var(--button-text-color);
+    /*background: var(--cancel-button-color);*/
 }
 
 .green-submit-button {
     width: 100%;
     margin-left: 10px;
 
-    color: var(--button-text-color);
+    /*color: var(--button-text-color);*/
 
     border: 2px solid var(--save-button-background);
-    background: var(--save-button-background);
-}
-
-.green-submit-button:hover {
-    color: var(--save-button-background);
-    opacity: 0.8;
-    box-shadow: 0 0 10px var(--save-button-background);
-    background: var(--button-text-color);
+    /*background: var(--save-button-background);*/
 }

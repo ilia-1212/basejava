@@ -60,8 +60,30 @@
                             <c:if test="${resume.getSection(sectionType) != null}">
                                 <c:set var="sectionOrg" value="${resume.getSection(sectionType) }"/>
                                 <jsp:useBean id="sectionOrg" type="com.urise.webapp.model.OrganizationSection"/>
-                                <%--                        to do--%>
+
                                 <div class="spacer"></div>
+
+
+                                    <c:forEach var="org" items="<%= sectionOrg.getOrganizations() %>" varStatus="idxOrg">
+
+                                        <input type="text" name="${sectionType.name().concat("HomePageNameOrg").concat(idxOrg.index)}" value="${org.homePage.name}" class="field" placeholder="Организация" size="50">
+                                        <input type="text" name="${sectionType.name().concat("HomePageURL").concat(idxOrg.index)}" value="${org.homePage.url}" class="field" placeholder="Сайт" size="50">
+
+                                        <c:forEach var="position" items="${org.positions}">
+                                            <jsp:useBean id="position" type="com.urise.webapp.model.Organization.Position"/>
+                                            <div class="date-section">
+                                                <input type="text" class="date field" placeholder="MM/YYYY" name="${sectionType.name().concat("PositionStartDate").concat(idxOrg.index)}" value="<%= DateUtil.toHtml(position.getStartDate())%>" size=" 50">
+
+                                                <input type="text" class="date field" placeholder="MM/YYYY" name="${sectionType.name().concat("PositionEndDate").concat(idxOrg.index)}" value="<%= DateUtil.toHtml(position.getEndDate())%>" size="50">
+                                            </div>
+
+                                            <textarea class="field" placeholder="Заголовок" name="${sectionType.name().concat("PositionTitle").concat(idxOrg.index)}" cols="30" rows="2">${position.title}</textarea>
+
+                                            <textarea class="field" placeholder="Описание" name="${sectionType.name().concat("PositionDescription").concat(idxOrg.index)}" cols="30" rows="2">${position.description}</textarea>
+                                            <p>
+                                        </c:forEach>
+                                        <hr>
+                                    </c:forEach>
                             </c:if>
                         </c:when>
                     </c:choose>
