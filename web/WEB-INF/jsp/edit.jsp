@@ -24,7 +24,7 @@
         <div class="scrollable-panel">
             <div class="form-wrapper">
                 <div class="section">ФИО</div>
-                <input class="field" type="text" name="fullName" size="55" placeholder="ФИО" value="${resume.fullName}" required="">
+                <input class="field" type="text" name="fullName" size="55" placeholder="ФИО" value="${resume.fullName}" required>
                 <div class="section">Контакты</div>
 
                 <c:forEach var="type" items = "<%=ContactType.values()%>">

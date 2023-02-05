@@ -35,8 +35,8 @@
                         <tr>
                             <td><a href="resume?uuid=${resume.uuid}&action=view">${resume.fullName}</a></td>
                             <td><%=ContactType.MAIL.toHtml(resume.getContact(ContactType.MAIL)) %></td>
-                            <td><a href="resume?uuid=${resume.uuid}&action=delete"><img src="img/delete.png"></a></td>
                             <td><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png"></a></td>
+                            <td><a href="resume?uuid=${resume.uuid}&action=delete"><img src="img/delete.png"></a></td>
                         </tr>
                     </c:forEach>
                 </table>
