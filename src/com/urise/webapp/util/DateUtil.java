@@ -27,6 +27,6 @@ public class DateUtil {
             return NOW;
         }
 
-        return LocalDate.parse(dt, FMT);
+        return LocalDate.parse("01/" + dt,  DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 }

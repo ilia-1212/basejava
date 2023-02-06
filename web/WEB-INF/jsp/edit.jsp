@@ -63,11 +63,10 @@
 
                                 <div class="spacer"></div>
 
-
                                     <c:forEach var="org" items="<%= sectionOrg.getOrganizations() %>" varStatus="idxOrg">
 
-                                        <input type="text" name="${sectionType.name().concat("HomePageNameOrg").concat(idxOrg.index)}" value="${org.homePage.name}" class="field" placeholder="Организация" size="50">
-                                        <input type="text" name="${sectionType.name().concat("HomePageURL").concat(idxOrg.index)}" value="${org.homePage.url}" class="field" placeholder="Сайт" size="50">
+                                        <input type="text" name="${sectionType}" value="${org.homePage.name}" class="field" placeholder="Организация" size="50">
+                                        <input type="text" name="${sectionType.name().concat("HomePageURL")}" value="${org.homePage.url}" class="field" placeholder="Сайт" size="50">
 
                                         <c:forEach var="position" items="${org.positions}">
                                             <jsp:useBean id="position" type="com.urise.webapp.model.Organization.Position"/>
@@ -96,7 +95,7 @@
             </div>
         </div>
     </form>
-<%--<jsp:include page="fragments/footer.jsp"/>--%>
+<jsp:include page="fragments/footer.jsp"/>
 
 </div>
 </body>

@@ -3,6 +3,7 @@ package com.urise.webapp.web;
 import com.urise.webapp.Config;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
+import com.urise.webapp.util.DateUtil;
 import com.urise.webapp.util.WebUtil;
 
 import javax.servlet.ServletConfig;
@@ -39,6 +40,7 @@ public class ResumeServlet extends HttpServlet {
             return;
         } else if (WebUtil.isEmpty(uuid)) {
              r = new Resume(fullName);
+             setEmptyResume(r);
         } else {
              r = storage.get(uuid);
 
@@ -56,12 +58,12 @@ public class ResumeServlet extends HttpServlet {
             }
         }
 
-//        for(SectionType type : SectionType.values()) {
-          for(SectionType type : new SectionType[]{
-                  SectionType.PERSONAL,
-                  SectionType.OBJECTIVE,
-                  SectionType.ACHIEVEMENT,
-                  SectionType.QUALIFICATIONS }) {
+       for(SectionType type : SectionType.values()) {
+//          for(SectionType type : new SectionType[]{
+//                  SectionType.PERSONAL,
+//                  SectionType.OBJECTIVE,
+//                  SectionType.ACHIEVEMENT,
+//                  SectionType.QUALIFICATIONS }) {
             String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
 
@@ -82,8 +84,27 @@ public class ResumeServlet extends HttpServlet {
                     }
                     case EXPERIENCE:
                     case EDUCATION: {
+                        String[] valuesUrl = request.getParameterValues(type.name() + "HomePageURL");
+                        List<Organization> orgList = new ArrayList<>();
 
-                        r.addSection(type, new OrganizationSection());
+                        for (int i = 0; i < values.length; i++) {
+                            if (!WebUtil.isEmpty(values[i])) {
+
+                                List<Organization.Position> positionList = new ArrayList<>();
+                                String[] valuesPosStartDate = request.getParameterValues(type.name() + "PositionStartDate" + i);
+                                String[] valuesPosEndDate = request.getParameterValues(type.name() + "PositionEndDate" + i);
+                                String[] valuesPosTitle = request.getParameterValues(type.name() + "PositionTitle" + i);
+                                String[] valuesPosDesc = request.getParameterValues(type.name() + "PositionDescription" + i);
+
+                                for (int j = 0; j < valuesPosTitle.length; j++) {
+                                    if (!WebUtil.isEmpty(valuesPosTitle[j])) {
+                                        positionList.add(new Organization.Position(DateUtil.fromHtml(valuesPosStartDate[j]) , DateUtil.fromHtml(valuesPosEndDate[j]), valuesPosTitle[j], valuesPosDesc[j]));
+                                    }
+                                }
+                                orgList.add(new Organization( new Link(values[i], valuesUrl[i]), positionList));
+                            }
+                        }
+                        r.addSection(type, new OrganizationSection(orgList));
                         break;
                     }
                 }
